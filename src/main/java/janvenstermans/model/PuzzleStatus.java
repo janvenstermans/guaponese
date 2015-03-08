@@ -1,5 +1,7 @@
 package janvenstermans.model;
 
+import janvenstermans.solver.PuzzleSolverUtil;
+
 /**
  * Console version of application.
  *
@@ -17,7 +19,11 @@ public class PuzzleStatus
 	/**
 	 * Double array of int indicating the solution value of the element.
 	 */
-	private int[][] fieldValueArray;
+	private PuzzleSolverUtil.VALUE[][] fieldValueArray;
+
+	public PuzzleStatus(PuzzleInput puzzleInput) {
+		this(puzzleInput.getDimensionX(), puzzleInput.getDimensionY());
+	}
 
 	public PuzzleStatus(int dimX, int dimY) {
 		createFieldStatus(dimX, dimY);
@@ -29,22 +35,63 @@ public class PuzzleStatus
 	}
 
 	private void createFieldValue(int dimX, int dimY) {
-		fieldValueArray = new int[dimY][dimX];
+		fieldValueArray = new PuzzleSolverUtil.VALUE[dimY][dimX];
 	}
 
 	public boolean[][] getFieldStatusArray() {
 		return fieldStatusArray;
 	}
 
-	public int[][] getFieldValueArray() {
+	public PuzzleSolverUtil.VALUE[][] getFieldValueArray() {
 		return fieldValueArray;
 	}
 
-	public void setFieldStatus(int x, int y, boolean status) {
+	public void setFieldStatusAndValue(int x, int y, boolean status, PuzzleSolverUtil.VALUE value) {
 		fieldStatusArray[x][y] = status;
+		fieldValueArray[x][y] = value;
 	}
 
-	public void setFieldValue(int x, int y, int value) {
-		fieldValueArray[x][y] = value;
+	/**
+	 * x-part.
+	 * @param column
+	 * @return
+	 */
+	public boolean[] getStatusOfColumn(int column) {
+		return fieldStatusArray[column];
+	}
+
+	/**
+	 * y-part.
+	 * @param row
+	 * @return
+	 */
+	public boolean[] getStatusYOfRow(int row) {
+		boolean[] result = new boolean[fieldStatusArray.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = fieldStatusArray[i][row];
+		}
+		return result;
+	}
+
+	/**
+	 * x-part.
+	 * @param column
+	 * @return
+	 */
+	public PuzzleSolverUtil.VALUE[] geValueOfColumn(int column) {
+		return fieldValueArray[column];
+	}
+
+	/**
+	 * y-part.
+	 * @param row
+	 * @return
+	 */
+	public PuzzleSolverUtil.VALUE[] getValueYOfRow(int row) {
+		PuzzleSolverUtil.VALUE[] result = new PuzzleSolverUtil.VALUE[fieldValueArray.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = fieldValueArray[i][row];
+		}
+		return result;
 	}
 }

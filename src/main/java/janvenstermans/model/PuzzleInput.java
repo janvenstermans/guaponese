@@ -16,9 +16,14 @@ public class PuzzleInput
 	private int dimensionX, dimensionY;
 
 	/**
-	 * Arrays of input values, i.e. the numbers on top and besides the grid.
+	 * Arrays of input values, i.e. the numbers on top of the grid. Added as seen from top to bottom.
 	 */
-	private int[][] inputX, inputY;
+	private int[][] inputX;
+
+	/**
+	 * Arrays of input values, i.e. the numbers on the left of the grid. Added as seen left to right.
+	 */
+	private int[][] inputY;
 
 	public int getDimensionX() {
 		return dimensionX;
@@ -55,5 +60,13 @@ public class PuzzleInput
 	public void setDimensions(int x, int y) {
 		setDimensionX(x);
 		setDimensionY(y);
+	}
+
+	public int[] getInputXOfColumn(int column) {
+		return inputX[column];
+	}
+
+	public int[] getInputYOfRow(int row) {
+		return inputY[row];
 	}
 }

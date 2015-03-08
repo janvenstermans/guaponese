@@ -1,6 +1,10 @@
 package janvenstermans;
 
+import janvenstermans.example.PuzzleInputSampleA;
 import janvenstermans.model.PuzzleInput;
+import janvenstermans.model.PuzzleStatus;
+import janvenstermans.model.PuzzleUtil;
+import janvenstermans.solver.PuzzleSolverUtil;
 
 import java.util.Scanner;
 
@@ -23,8 +27,30 @@ public class App
     }
 
 	public void run() {
-		puzzleInput = new PuzzleInput();
-		getDimensions();
+		// get PuzzleInput
+//		puzzleInput = getUserPuzzleInput();
+		puzzleInput = PuzzleInputSampleA.createPuzzleInput();
+
+		// check puzzleInput
+		boolean check = PuzzleUtil.checkInputXAndY(puzzleInput);
+		if (check) {
+			PuzzleStatus puzzleStatus = new PuzzleStatus(puzzleInput);
+		   	PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
+
+			PuzzleSolverUtil.checkCount(puzzleStatus, puzzleInput);
+
+		   	PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
+		}
+	}
+
+	public PuzzleInput getUserPuzzleInput() {
+		PuzzleInput puzzleInput = new PuzzleInput();
+		System.out.println("X dimenson");
+		int xDim = keyboard.nextInt();
+		System.out.println("Y dimenson");
+		int yDim = keyboard.nextInt();
+		puzzleInput.setDimensions(xDim, yDim);
+		System.out.println( "Hello World!" );
 		int menu = -1;
 		do {
 			System.out.println("Menu choice");
@@ -33,14 +59,6 @@ public class App
 			System.out.println(tab + "2 input");
 			menu = keyboard.nextInt();
 		} while (menu != 0);
-	}
-
-	public void getDimensions() {
-		System.out.println("X dimenson");
-		int xDim = keyboard.nextInt();
-		System.out.println("Y dimenson");
-		int yDim = keyboard.nextInt();
-		puzzleInput.setDimensions(xDim, yDim);
-		System.out.println( "Hello World!" );
+		return puzzleInput;
 	}
 }
