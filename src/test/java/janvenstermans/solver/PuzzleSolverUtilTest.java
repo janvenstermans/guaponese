@@ -11,6 +11,50 @@ import java.util.Arrays;
 public class PuzzleSolverUtilTest {
 
 	//--------------------------------------------------------
+	// method checkCountOfArray for specials
+	//--------------------------------------------------------
+
+	@Test
+	public void testCheckCountOfArrayEmptyInput() throws Exception {
+		int dimensionInput = 10;
+		int[] inputArrayInput = new int[] {  };
+		boolean[] statusArrayInput  = new boolean[dimensionInput]; // nothing solved yet
+		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
+		// create expected values
+		boolean[] statusArrayExpected  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayExpected  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		for (int j = 0 ; j < dimensionInput; j++) {
+			statusArrayExpected[j] = true;
+			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.NONE;
+		}
+
+		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
+
+		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
+		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
+	}
+
+	@Test
+	public void testCheckCountOfArrayFullInput() throws Exception {
+		int dimensionInput = 10;
+		int[] inputArrayInput = new int[] { 10 };
+		boolean[] statusArrayInput  = new boolean[dimensionInput]; // nothing solved yet
+		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
+		// create expected values
+		boolean[] statusArrayExpected  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayExpected  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		for (int j = 0 ; j < dimensionInput; j++) {
+			statusArrayExpected[j] = true;
+			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.BLACK;
+		}
+
+		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
+
+		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
+		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
+	}
+
+	//--------------------------------------------------------
 	// method checkCountOfArray for empty array
 	//--------------------------------------------------------
 
@@ -95,6 +139,10 @@ public class PuzzleSolverUtilTest {
 		// solved values
 		statusArrayExpected[2] = true;
 		valueArrayExpected[2] = PuzzleSolverUtil.VALUE.NONE;
+		for (int j = 0 ; j <= 2; j++) {
+			statusArrayExpected[j] = true;
+			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.NONE;
+		}
 		for (int j = 5 ; j <= 7; j++) {
 			statusArrayExpected[j] = true;
 			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.BLACK;
@@ -132,6 +180,9 @@ public class PuzzleSolverUtilTest {
 		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
 	}
 
+	//--------------------------------------------------------
+
+	// method checkCountOfArray for filling up empty elements
 	@Test
 	public void testCheckCountOfArrayWithSolvedElements3() throws Exception {
 		int dimensionInput = 10;
@@ -170,8 +221,43 @@ public class PuzzleSolverUtilTest {
 		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
 	}
 
-	//--------------------------------------------------------
-	// method checkCountOfArray for filling up empty elements
+	@Test
+	public void testCheckCountOfArrayWithAllSolvedElements3() throws Exception {
+		int dimensionInput = 10;
+		int[] inputArrayInput = new int[] { 1,2,1,3 };
+		boolean[] statusArrayInput  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		// create expected values
+		boolean[] statusArrayExpected  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayExpected  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		// solved values
+		statusArrayExpected[0] = true;
+		valueArrayExpected[0] = PuzzleSolverUtil.VALUE.BLACK;
+		statusArrayExpected[1] = true;
+		valueArrayExpected[1] = PuzzleSolverUtil.VALUE.NONE;
+		statusArrayExpected[2] = true;
+		valueArrayExpected[2] = PuzzleSolverUtil.VALUE.BLACK;
+		statusArrayExpected[3] = true;
+		valueArrayExpected[3] = PuzzleSolverUtil.VALUE.BLACK;
+		statusArrayExpected[4] = true;
+		valueArrayExpected[4] = PuzzleSolverUtil.VALUE.NONE;
+		statusArrayExpected[5] = true;
+		valueArrayExpected[5] = PuzzleSolverUtil.VALUE.BLACK;
+		statusArrayExpected[6] = true;
+		valueArrayExpected[6] = PuzzleSolverUtil.VALUE.NONE;
+		statusArrayExpected[7] = true;
+		valueArrayExpected[7] = PuzzleSolverUtil.VALUE.BLACK;
+		statusArrayExpected[8] = true;
+		valueArrayExpected[8] = PuzzleSolverUtil.VALUE.BLACK;
+		statusArrayExpected[9] = true;
+		valueArrayExpected[9] = PuzzleSolverUtil.VALUE.BLACK;
+
+		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
+
+		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
+		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
+	}
+
 	//--------------------------------------------------------
 
 	@Test
@@ -239,6 +325,40 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayToAddNoneValues3() throws Exception {
 		int dimensionInput = 10;
+		int[] inputArrayInput = new int[] { 1, 3 };
+		boolean[] statusArrayInput  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		// solved values
+		for (int j = 4 ; j <= 6; j++) {
+			statusArrayInput[j] = true;
+			valueArrayInput[j] = PuzzleSolverUtil.VALUE.BLACK;
+		}
+		// create expected values
+		boolean[] statusArrayExpected  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayExpected  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		// solved values
+		for (int j = 4 ; j <= 6; j++) {
+			statusArrayExpected[j] = true;
+			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.BLACK;
+		}
+		for (int j = 7 ; j <= 9; j++) {
+			statusArrayExpected[j] = true;
+			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.NONE;
+		}
+
+		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
+
+		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
+		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
+	}
+
+	//--------------------------------------------------------
+	// method checkCountOfArray all can be solved
+	//--------------------------------------------------------
+
+	@Test
+	public void testCheckCountOfArrayAllCanBeSolvedAllBlacksAccounted() throws Exception {
+		int dimensionInput = 10;
 		int[] inputArrayInput = new int[] { 1, 1, 1 };
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
@@ -253,16 +373,47 @@ public class PuzzleSolverUtilTest {
 		boolean[] statusArrayExpected  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayExpected  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
-		statusArrayExpected[2] = true;
+		for (int i = 0 ; i < dimensionInput; i++) {
+			statusArrayExpected[i] = true;
+			valueArrayExpected[i] = PuzzleSolverUtil.VALUE.NONE;
+		}
 		valueArrayExpected[2] = PuzzleSolverUtil.VALUE.BLACK;
-		statusArrayExpected[3] = true;
-		valueArrayExpected[3] = PuzzleSolverUtil.VALUE.NONE;
-		statusArrayExpected[4] = true;
 		valueArrayExpected[4] = PuzzleSolverUtil.VALUE.BLACK;
-		statusArrayExpected[5] = true;
-		valueArrayExpected[5] = PuzzleSolverUtil.VALUE.NONE;
-		valueArrayExpected[5] = PuzzleSolverUtil.VALUE.NONE;
-		statusArrayExpected[6] = true;
+		valueArrayExpected[6] = PuzzleSolverUtil.VALUE.BLACK;
+
+		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
+
+		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
+		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
+	}
+
+	@Test
+	public void testCheckCountOfArrayAllCanBeSolvedAllNonesAccounted() throws Exception {
+		int dimensionInput = 10;
+		int[] inputArrayInput = new int[] { 1, 1, 1 };
+		boolean[] statusArrayInput  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		// solved values
+		for (int i = 0 ; i < dimensionInput; i++) {
+			statusArrayInput[i] = true;
+			valueArrayInput[i] = PuzzleSolverUtil.VALUE.NONE;
+		}
+		statusArrayInput[2] = false;
+		valueArrayInput[2] = null;
+		statusArrayInput[4] = false;
+		valueArrayInput[4] = null;
+		statusArrayInput[6] = false;
+		valueArrayInput[6] = null;
+		// create expected values
+		boolean[] statusArrayExpected  = new boolean[dimensionInput];
+		PuzzleSolverUtil.VALUE[] valueArrayExpected  = new PuzzleSolverUtil.VALUE[dimensionInput];
+		// solved values
+		for (int i = 0 ; i < dimensionInput; i++) {
+			statusArrayExpected[i] = true;
+			valueArrayExpected[i] = PuzzleSolverUtil.VALUE.NONE;
+		}
+		valueArrayExpected[2] = PuzzleSolverUtil.VALUE.BLACK;
+		valueArrayExpected[4] = PuzzleSolverUtil.VALUE.BLACK;
 		valueArrayExpected[6] = PuzzleSolverUtil.VALUE.BLACK;
 
 		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
