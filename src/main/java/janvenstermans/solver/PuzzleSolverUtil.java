@@ -127,6 +127,8 @@ public class PuzzleSolverUtil {
 		for (InputValueSolverInfo inputValueSolverInfo : temp) {
 			int countUpStart = countUp;
 			int countUpEnd = countUpStart + inputValueSolverInfo.getInputValue() - 1;
+
+			// move up until it is possible to fit in the inputValue
 			Integer lastSolvedWithStatusNone =
 					getLastSolvedNoneElement(statusArrayResult,  valueArrayResult, countUpStart, countUpEnd);
 			while (lastSolvedWithStatusNone != null) {
@@ -135,11 +137,29 @@ public class PuzzleSolverUtil {
 				lastSolvedWithStatusNone =
 						getLastSolvedNoneElement(statusArrayResult,  valueArrayResult, countUpStart, countUpEnd);
 			}
+			// end move up
+
+			// register solved items to InputValueSolverInfo
+			inputValueSolverInfo.setIndexMin(countUpStart);
+			for (int i = countUpStart; i <= countUpEnd; i++) {
+				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					inputValueSolverInfo.addSolvedValue(i);
+				}
+			}
+
+			// check adjacing solved values
 			int numberOfBlackElementDirectlyAfterPosition = getNumberOfBlackElementDirectlyAfterPosition(
 					statusArrayResult, valueArrayResult, countUpEnd);
+			for (int i = countUpEnd + 1; i <= countUpEnd + numberOfBlackElementDirectlyAfterPosition; i++) {
+				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					inputValueSolverInfo.addSolvedValue(i);
+				}
+			}
+			inputValueSolverInfo.setIndexMin(countUpStart + numberOfBlackElementDirectlyAfterPosition);
 			if (numberOfBlackElementDirectlyAfterPosition > inputValueSolverInfo.getInputValue()) {
 			  	throw new Exception();
 			}
+
 			inputValueSolverInfo.setCountUp(countUpEnd + numberOfBlackElementDirectlyAfterPosition);
 			countUp = countUpEnd + 2;
 		}
@@ -148,6 +168,8 @@ public class PuzzleSolverUtil {
 			InputValueSolverInfo inputValueSolverInfo = temp[m];
 			int countDownStart = countDown;
 			int countDownEnd = countDownStart - (inputValueSolverInfo.getInputValue() - 1);
+
+			// move down until it is possible to fit in the inputValue
 			Integer firstSolvedNoneElement =
 					getFirstSolvedNoneElement(statusArrayResult,  valueArrayResult, countDownEnd, countDownStart);
 			while (firstSolvedNoneElement != null) {
@@ -156,11 +178,29 @@ public class PuzzleSolverUtil {
 				firstSolvedNoneElement =
 						getFirstSolvedNoneElement(statusArrayResult,  valueArrayResult, countDownEnd, countDownStart);
 			}
+			// end move down
+
+			// register solved items to InputValueSolverInfo
+			inputValueSolverInfo.setIndexMax(countDownStart);
+			for (int i = countDownStart; i >= countDownEnd; i--) {
+				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					inputValueSolverInfo.addSolvedValue(i);
+				}
+			}
+
+			// check adjacing solved values
 			int numberOfBlackElementDirectlyBeforePosition = getNumberOfBlackElementDirectlyBeforePosition(
 					statusArrayResult, valueArrayResult, countDownEnd);
+			for (int i = countDownStart - 1; i >= countDownEnd - numberOfBlackElementDirectlyBeforePosition; i--) {
+				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					inputValueSolverInfo.addSolvedValue(i);
+				}
+			}
+			inputValueSolverInfo.setIndexMax(countDownStart - numberOfBlackElementDirectlyBeforePosition);
 			if (numberOfBlackElementDirectlyBeforePosition > inputValueSolverInfo.getInputValue()) {
 				throw new Exception();
 			}
+
 			inputValueSolverInfo.setCountDown(countDownEnd - numberOfBlackElementDirectlyBeforePosition);
 			countDown = countDownEnd - 2;
 		}

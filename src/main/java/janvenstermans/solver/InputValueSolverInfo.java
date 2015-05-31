@@ -11,11 +11,14 @@ import java.util.Set;
  */
 public class InputValueSolverInfo {
 
-	private int inputValue, countUpMin, countUpMax, countDownMax, countDownMin;
+	private final int inputValue;
+
+	// TODO remove
+	private int countUpMin, countUpMax, countDownMax, countDownMin;
+
+	private Integer indexMin, indexMax;
 
 	private Set<Integer> solvedValues = new HashSet<Integer>();
-
-	private boolean solved;
 
 	/**
 	 * Default constructor, with the input inputValue.
@@ -26,6 +29,22 @@ public class InputValueSolverInfo {
 	}
 
 	/* setter methods */
+
+	public void setIndexMin(Integer indexMin) throws PuzzleSolverException {
+		if (this.indexMin == null || this.indexMin < indexMin) {
+			this.indexMin = indexMin;
+		}
+	}
+
+	public void setIndexMax(Integer indexMax) throws PuzzleSolverException {
+		if (this.indexMax == null || this.indexMax > indexMax) {
+			if (indexMax < getInputValue() - 1) {
+				throw new PuzzleSolverException("Max index too small for input value");
+			}
+			this.indexMax = indexMax;
+			checkInputMinAndMaxForSolved();
+		}
+	}
 
 	public void setCountUp(int endValue) {
 		countUpMax = endValue;
@@ -39,9 +58,6 @@ public class InputValueSolverInfo {
 
 	public void addSolvedValue(int solvedValue) {
 		solvedValues.add(solvedValue);
-		if (solvedValues.size() == inputValue) {
-			solved = true;
-		}
 	}
 
 	/* getters */
@@ -66,7 +82,50 @@ public class InputValueSolverInfo {
 		return countDownMin;
 	}
 
+	public Integer getIndexMax() {
+		return indexMax;
+	}
+
+	public Integer getIndexMin() {
+		return indexMin;
+	}
+
 	public boolean isSolved() {
-		return solved;
+		return solvedValues.size() == inputValue;
+	}
+
+	//----------------------
+	// private methodes
+	//----------------------
+
+	private void checkInputMinAndMaxForSolved() throws PuzzleSolverException {
+		if (indexMax != null && indexMin != null) {
+			int diff = indexMax - indexMin;
+			if (diff < 0) {
+				throw new PuzzleSolverException("InputValueSolverInfo: IndexMax cannot be below IndexMin");
+			} else if (diff < getInputValue() - 1) {
+				throw new PuzzleSolverException("InputValueSolverInfo:" +
+						" Difference between IndexMax and IndexMin cannot be less than inputValue " + getInputValue());
+			} else if (diff == getInputValue() - 1) {
+				solveValuesForMinMaxStretchToInputValue();
+			}
+		} else if (indexMax != null) {
+			if (indexMax < getInputValue() - 1) {
+				throw new PuzzleSolverException("InputValueSolverInfo:" +
+						" IndexMax cannot be lower than inputValue " + getInputValue());
+			} else if (indexMax == getInputValue() - 1) {
+				this.indexMin = 0;
+				solveValuesForMinMaxStretchToInputValue();
+			}
+		}
+	}
+
+	private void solveValuesForMinMaxStretchToInputValue() {
+		if (getIndexMin() != null && getIndexMax() != null &&
+				getIndexMax() - getIndexMin() == getInputValue() - 1) {
+			for (int i = getIndexMin(); i <= getIndexMax(); i++) {
+				addSolvedValue(i);
+			}
+		}
 	}
 }
