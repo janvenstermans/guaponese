@@ -1,5 +1,7 @@
 package janvenstermans.solver;
 
+import janvenstermans.PuzzleTestUtil;
+import janvenstermans.model.PuzzleUtil;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -173,9 +175,16 @@ public class PuzzleSolverUtilTest {
 			statusArrayExpected[j] = true;
 			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.BLACK;
 		}
+		for (int j = 7 ; j < dimensionInput; j++) {
+			statusArrayExpected[j] = true;
+			valueArrayExpected[j] = PuzzleSolverUtil.VALUE.NONE;
+		}
+		printInputAndExpectedOutputAsRow(inputArrayInput, statusArrayInput, valueArrayInput,
+				statusArrayExpected, valueArrayExpected);
 
 		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
 
+		printCalculatedOutputAsRow(inputArrayInput, arrayResult);
 		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
 		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
 	}
@@ -285,9 +294,12 @@ public class PuzzleSolverUtilTest {
 		valueArrayExpected[7] = PuzzleSolverUtil.VALUE.BLACK;
 		statusArrayExpected[9] = true;
 		valueArrayExpected[9] = PuzzleSolverUtil.VALUE.NONE;
+		printInputAndExpectedOutputAsRow(inputArrayInput, statusArrayInput, valueArrayInput,
+				statusArrayExpected, valueArrayExpected);
 
 		ArrayResult arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput, valueArrayInput);
 
+		printCalculatedOutputAsRow(inputArrayInput, arrayResult);
 		assertStatusArray(statusArrayExpected, arrayResult.getStatusArray());
 		assertValueArray(valueArrayExpected, arrayResult.getValueArray());
 	}
@@ -448,5 +460,18 @@ public class PuzzleSolverUtilTest {
 		} else {
 			Assert.assertNull(result);
 		}
+	}
+
+	private void printInputAndExpectedOutputAsRow(int[] inputArray,
+												  boolean[] statusArrayInput, PuzzleSolverUtil.VALUE[] valueArrayInput,
+												  boolean[] statusArrayExpected, PuzzleSolverUtil.VALUE[] valueArrayExpected) {
+		System.out.println("Input vs expected (for visualization)");
+		PuzzleTestUtil.printArrayAsRow(inputArray, statusArrayInput, valueArrayInput);
+		PuzzleTestUtil.printArrayAsRow(inputArray, statusArrayExpected, valueArrayExpected);
+	}
+
+	private void printCalculatedOutputAsRow(int[] inputArray, ArrayResult arrayResult) {
+		System.out.println("Output");
+		PuzzleTestUtil.printArrayAsRow(inputArray, arrayResult.getStatusArray(), arrayResult.getValueArray());
 	}
 }

@@ -70,9 +70,7 @@ public class PuzzleSolverUtil {
 					}
 				}
 			} else {
-				checkForNoneValues(inputArray, statusArrayResult, valueArrayResult);
 				checkForBlackValues(inputArray, statusArrayResult, valueArrayResult);
-				checkForNoneValues(inputArray, statusArrayResult, valueArrayResult);
 			}
 		} else {
 			Arrays.fill(statusArrayResult, true);
@@ -118,55 +116,57 @@ public class PuzzleSolverUtil {
 	 */
 	private static void checkForBlackValues(int[] inputArray, boolean[] statusArrayResult,
 											VALUE[] valueArrayResult) throws Exception {
-		TempHelper[] temp = new TempHelper[inputArray.length];
+		// create InputValueSolverInfo objects
+		// TODO: move this up, as part of the general solve strategy
+		InputValueSolverInfo[] temp = new InputValueSolverInfo[inputArray.length];
 		for (int k = 0; k < inputArray.length; k++) {
-			temp[k] = new TempHelper(inputArray[k]);
+			temp[k] = new InputValueSolverInfo(inputArray[k]);
 		}
-
+		// go through the input values from lowest to highest
 		int countUp = 0;
-		for (TempHelper tempHelper : temp) {
+		for (InputValueSolverInfo inputValueSolverInfo : temp) {
 			int countUpStart = countUp;
-			int countUpEnd = countUpStart + tempHelper.getValue() - 1;
+			int countUpEnd = countUpStart + inputValueSolverInfo.getInputValue() - 1;
 			Integer lastSolvedWithStatusNone =
 					getLastSolvedNoneElement(statusArrayResult,  valueArrayResult, countUpStart, countUpEnd);
 			while (lastSolvedWithStatusNone != null) {
 				countUpStart = lastSolvedWithStatusNone + 1;
-				countUpEnd = countUpStart + tempHelper.getValue() - 1;
+				countUpEnd = countUpStart + inputValueSolverInfo.getInputValue() - 1;
 				lastSolvedWithStatusNone =
 						getLastSolvedNoneElement(statusArrayResult,  valueArrayResult, countUpStart, countUpEnd);
 			}
 			int numberOfBlackElementDirectlyAfterPosition = getNumberOfBlackElementDirectlyAfterPosition(
 					statusArrayResult, valueArrayResult, countUpEnd);
-			if (numberOfBlackElementDirectlyAfterPosition > tempHelper.getValue()) {
+			if (numberOfBlackElementDirectlyAfterPosition > inputValueSolverInfo.getInputValue()) {
 			  	throw new Exception();
 			}
-			tempHelper.setCountUp(countUpEnd + numberOfBlackElementDirectlyAfterPosition);
+			inputValueSolverInfo.setCountUp(countUpEnd + numberOfBlackElementDirectlyAfterPosition);
 			countUp = countUpEnd + 2;
 		}
 		int countDown = statusArrayResult.length - 1;
 		for (int m = temp.length - 1; m >= 0; m--) {
-			TempHelper tempHelper = temp[m];
+			InputValueSolverInfo inputValueSolverInfo = temp[m];
 			int countDownStart = countDown;
-			int countDownEnd = countDownStart - (tempHelper.getValue() - 1);
+			int countDownEnd = countDownStart - (inputValueSolverInfo.getInputValue() - 1);
 			Integer firstSolvedNoneElement =
 					getFirstSolvedNoneElement(statusArrayResult,  valueArrayResult, countDownEnd, countDownStart);
 			while (firstSolvedNoneElement != null) {
 				countDownStart = firstSolvedNoneElement - 1;
-				countDownEnd = countDownStart - (tempHelper.getValue() - 1);
+				countDownEnd = countDownStart - (inputValueSolverInfo.getInputValue() - 1);
 				firstSolvedNoneElement =
 						getFirstSolvedNoneElement(statusArrayResult,  valueArrayResult, countDownEnd, countDownStart);
 			}
 			int numberOfBlackElementDirectlyBeforePosition = getNumberOfBlackElementDirectlyBeforePosition(
 					statusArrayResult, valueArrayResult, countDownEnd);
-			if (numberOfBlackElementDirectlyBeforePosition > tempHelper.getValue()) {
+			if (numberOfBlackElementDirectlyBeforePosition > inputValueSolverInfo.getInputValue()) {
 				throw new Exception();
 			}
-			tempHelper.setCountDown(countDownEnd - numberOfBlackElementDirectlyBeforePosition);
+			inputValueSolverInfo.setCountDown(countDownEnd - numberOfBlackElementDirectlyBeforePosition);
 			countDown = countDownEnd - 2;
 		}
 		for (int z = 0; z < temp.length; z++) {
-			TempHelper values = temp[z];
-			TempHelper valuesBefore = null;
+			InputValueSolverInfo values = temp[z];
+			InputValueSolverInfo valuesBefore = null;
 			if (z - 1 >= 0) {
 				valuesBefore = temp[z - 1];
 			}
@@ -216,20 +216,6 @@ public class PuzzleSolverUtil {
 		}
 	}
 
-	/**
-	 * Search for NONE values.
-	 *
-	 * @param inputArray
-	 * @param statusArrayResult
-	 * @param valueArrayResult
-	 * @throws Exception
-	 */
-	private static void checkForNoneValues(int[] inputArray, boolean[] statusArrayResult,
-											VALUE[] valueArrayResult) throws Exception {
-		//try to link inputArray values to vamueArrayResult
-
-	}
-
 	private static Integer getFirstSolvedNoneElement(boolean[] statusArray, VALUE[] valueArray, int start, int end) {
 		if (statusArray.length > 0 && valueArray.length > 0 && statusArray.length == valueArray.length
 				&& start < statusArray.length && end < statusArray.length) {
@@ -275,48 +261,4 @@ public class PuzzleSolverUtil {
 		}
 		return result;
 	}
-
-
-	private static class TempHelper {
-		private int value, countUpMin, countUpMax, countDownMax, countDownMin;
-
-		private TempHelper(int value) {
-			this.value = value;
-		}
-
-		/* setter methods */
-
-		public void setCountUp(int endValue) {
-			countUpMax = endValue;
-			countUpMin = endValue - value + 1;
-		}
-
-		public void setCountDown(int endValue) {
-			countDownMin = endValue;
-			countDownMax = endValue + value - 1;
-		}
-
-		/* getters */
-
-		public int getValue() {
-			return value;
-		}
-
-		public int getCountUpMin() {
-			return countUpMin;
-		}
-
-		public int getCountUpMax() {
-			return countUpMax;
-		}
-
-		public int getCountDownMax() {
-			return countDownMax;
-		}
-
-		public int getCountDownMin() {
-			return countDownMin;
-		}
-	}
-
 }

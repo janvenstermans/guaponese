@@ -115,6 +115,10 @@ public final class PuzzleUtil {
 	 * @return
 	 */
 	private static String formatInputRow(int[] input, int sizeTotal) {
+	   	return String.format("%" + sizeTotal +"s", formatInputRow(input));
+	}
+
+	public static String formatInputRow(int[] input) {
 		String line = "";
 		if (input.length > 0) {
 			line += String.format("%2s", input[0] > 0 ? input[0] : "");
@@ -122,10 +126,10 @@ public final class PuzzleUtil {
 				line += String.format("%3s", input[i] > 0 ? input[i] : "");
 			}
 		}
-	   	return String.format("%" + sizeTotal +"s", line);
+	   	return line;
 	}
 
-	private static String formatStatusRow(boolean[] status, PuzzleSolverUtil.VALUE[] values) {
+	public static String formatStatusRow(boolean[] status, PuzzleSolverUtil.VALUE[] values) {
 		String line = "";
 		if (status.length > 0) {
 			line += String.format("%2s", status[0] ? toString(values[0]) : "");
