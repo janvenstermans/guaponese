@@ -63,6 +63,10 @@ public class PuzzleInput
 		return inputY;
 	}
 
+	public InputValueSolverInfo[][] getInputValueSolverInfoArrayY() {
+		return inputValueSolverInfoArrayY;
+	}
+
 	public InputValueSolverInfo[] getSolverInfoXOfColumn(int column) {
 		return inputValueSolverInfoArrayX[column];
 	}

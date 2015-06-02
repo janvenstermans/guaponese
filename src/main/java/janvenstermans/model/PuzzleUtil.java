@@ -16,8 +16,8 @@ public final class PuzzleUtil {
 	}
 
 	public static boolean checkInputXAndY(PuzzleInput puzzleInput) {
-		int xCount = countInput(puzzleInput.getInputX());
-		int yCount = countInput(puzzleInput.getInputY());
+		int xCount = countInput(puzzleInput.getInputValueSolverInfoArrayX());
+		int yCount = countInput(puzzleInput.getInputValueSolverInfoArrayY());
 		System.out.println("PuzzleInput check: xCount: " + xCount + " - yCount: " + yCount);
 		return xCount == yCount;
 	}
@@ -45,11 +45,11 @@ public final class PuzzleUtil {
 		}
 	}
 
-	private static int countInput(int[][] input) {
+	private static int countInput(InputValueSolverInfo[][] input) {
 		int xCount = 0;
-		for (int[] sub : input) {
-			for (int subSub : sub) {
-				xCount += subSub;
+		for (InputValueSolverInfo[] sub : input) {
+			for (InputValueSolverInfo subSub : sub) {
+				xCount += subSub.getInputValue();
 			}
 		}
 		return xCount;
