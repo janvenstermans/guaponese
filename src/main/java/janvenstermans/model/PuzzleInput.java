@@ -19,24 +19,20 @@ public class PuzzleInput
 	/**
 	 * Arrays of input values, i.e. the numbers on top of the grid. Added as seen from top to bottom.
 	 */
-	private int[][] inputX;
-
 	private InputValueSolverInfo[][] inputValueSolverInfoArrayX;
 
 	/**
 	 * Arrays of input values, i.e. the numbers on the left of the grid. Added as seen left to right.
 	 */
-	private int[][] inputY;
 	private InputValueSolverInfo[][] inputValueSolverInfoArrayY;
 
 	public PuzzleInput(int[][] inputX, int[][] inputY) throws PuzzleSolverException {
 		if (inputX != null && inputY != null) {
-			this.inputX = inputX;
-			this.inputY = inputY;
 			dimensionX = inputX.length;
 			dimensionY = inputY.length;
-			createSolverInfosFromInputX();
-			createSolverInfosFromInputY();
+			// need dimensions!
+			createSolverInfosFromInputX(inputX);
+			createSolverInfosFromInputY(inputY);
 			int i = 5;
 		} else {
 			throw new PuzzleSolverException("input empty");
@@ -51,16 +47,8 @@ public class PuzzleInput
 		return dimensionY;
 	}
 
-	public int[][] getInputX() {
-		return inputX;
-	}
-
 	public InputValueSolverInfo[][] getInputValueSolverInfoArrayX() {
 		return inputValueSolverInfoArrayX;
-	}
-
-	public int[][] getInputY() {
-		return inputY;
 	}
 
 	public InputValueSolverInfo[][] getInputValueSolverInfoArrayY() {
@@ -75,7 +63,7 @@ public class PuzzleInput
 		return inputValueSolverInfoArrayY[row];
 	}
 
-	private void createSolverInfosFromInputX() throws PuzzleSolverException {
+	private void createSolverInfosFromInputX(int[][] inputX) throws PuzzleSolverException {
 		if (inputX != null) {
 			inputValueSolverInfoArrayX = new InputValueSolverInfo[inputX.length][];
 			for (int i = 0; i < inputX.length; i++) {
@@ -95,7 +83,7 @@ public class PuzzleInput
 		}
 	}
 
-	private void createSolverInfosFromInputY() throws PuzzleSolverException {
+	private void createSolverInfosFromInputY(int[][] inputY) throws PuzzleSolverException {
 		if (inputY != null) {
 			inputValueSolverInfoArrayY = new InputValueSolverInfo[inputY.length][];
 			for (int i = 0; i < inputY.length; i++) {
