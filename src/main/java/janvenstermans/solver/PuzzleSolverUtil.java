@@ -118,13 +118,14 @@ public class PuzzleSolverUtil {
 											VALUE[] valueArrayResult) throws Exception {
 		// create InputValueSolverInfo objects
 		// TODO: move this up, as part of the general solve strategy
-		InputValueSolverInfo[] temp = new InputValueSolverInfo[inputArray.length];
+		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[inputArray.length];
 		for (int k = 0; k < inputArray.length; k++) {
-			temp[k] = new InputValueSolverInfo(inputArray[k]);
+			inputValueSolverInfoArray[k] = new InputValueSolverInfo(inputArray[k]);
 		}
 		// go through the input values from lowest to highest
 		int countUp = 0;
-		for (InputValueSolverInfo inputValueSolverInfo : temp) {
+		boolean countUpFirst = true;
+		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
 			int countUpStart = countUp;
 			int countUpEnd = countUpStart + inputValueSolverInfo.getInputValue() - 1;
 
@@ -141,31 +142,42 @@ public class PuzzleSolverUtil {
 
 			// register solved items to InputValueSolverInfo
 			inputValueSolverInfo.setIndexMin(countUpStart);
-			for (int i = countUpStart; i <= countUpEnd; i++) {
-				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
-					inputValueSolverInfo.addSolvedValue(i);
+			// it is not possible to always attribute solved values this way, for every inputValueSolverInfo
+			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
+			if (countUpFirst) {
+				for (int i = countUpStart; i <= countUpEnd; i++) {
+					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+						inputValueSolverInfo.addSolvedValue(i);
+					}
 				}
 			}
 
 			// check adjacing solved values
 			int numberOfBlackElementDirectlyAfterPosition = getNumberOfBlackElementDirectlyAfterPosition(
 					statusArrayResult, valueArrayResult, countUpEnd);
-			for (int i = countUpEnd + 1; i <= countUpEnd + numberOfBlackElementDirectlyAfterPosition; i++) {
-				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
-					inputValueSolverInfo.addSolvedValue(i);
+			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
+			if (countUpFirst) {
+				for (int i = countUpEnd + 1; i <= countUpEnd + numberOfBlackElementDirectlyAfterPosition; i++) {
+					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+						inputValueSolverInfo.addSolvedValue(i);
+					}
 				}
 			}
-			inputValueSolverInfo.setIndexMin(countUpStart + numberOfBlackElementDirectlyAfterPosition);
 			if (numberOfBlackElementDirectlyAfterPosition > inputValueSolverInfo.getInputValue()) {
 			  	throw new Exception();
 			}
 
 			inputValueSolverInfo.setCountUp(countUpEnd + numberOfBlackElementDirectlyAfterPosition);
 			countUp = countUpEnd + 2;
+			countUpFirst = false;
 		}
+		// end count up
+
+		// go through the input values from highest to lowest
 		int countDown = statusArrayResult.length - 1;
-		for (int m = temp.length - 1; m >= 0; m--) {
-			InputValueSolverInfo inputValueSolverInfo = temp[m];
+		boolean countDownFirst = true;
+		for (int m = inputValueSolverInfoArray.length - 1; m >= 0; m--) {
+			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
 			int countDownStart = countDown;
 			int countDownEnd = countDownStart - (inputValueSolverInfo.getInputValue() - 1);
 
@@ -182,18 +194,25 @@ public class PuzzleSolverUtil {
 
 			// register solved items to InputValueSolverInfo
 			inputValueSolverInfo.setIndexMax(countDownStart);
-			for (int i = countDownStart; i >= countDownEnd; i--) {
-				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
-					inputValueSolverInfo.addSolvedValue(i);
+			// it is not possible to always attribute solved values this way, for every inputValueSolverInfo
+			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
+			if (countDownFirst) {
+				for (int i = countDownStart; i >= countDownEnd; i--) {
+					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+						inputValueSolverInfo.addSolvedValue(i);
+					}
 				}
 			}
 
 			// check adjacing solved values
 			int numberOfBlackElementDirectlyBeforePosition = getNumberOfBlackElementDirectlyBeforePosition(
 					statusArrayResult, valueArrayResult, countDownEnd);
-			for (int i = countDownStart - 1; i >= countDownEnd - numberOfBlackElementDirectlyBeforePosition; i--) {
-				if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
-					inputValueSolverInfo.addSolvedValue(i);
+			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
+			if (countDownFirst) {
+				for (int i = countDownStart - 1; i >= countDownEnd - numberOfBlackElementDirectlyBeforePosition; i--) {
+					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+						inputValueSolverInfo.addSolvedValue(i);
+					}
 				}
 			}
 			inputValueSolverInfo.setIndexMax(countDownStart - numberOfBlackElementDirectlyBeforePosition);
@@ -203,12 +222,13 @@ public class PuzzleSolverUtil {
 
 			inputValueSolverInfo.setCountDown(countDownEnd - numberOfBlackElementDirectlyBeforePosition);
 			countDown = countDownEnd - 2;
+			countDownFirst = false;
 		}
-		for (int z = 0; z < temp.length; z++) {
-			InputValueSolverInfo values = temp[z];
+		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
+			InputValueSolverInfo values = inputValueSolverInfoArray[z];
 			InputValueSolverInfo valuesBefore = null;
 			if (z - 1 >= 0) {
-				valuesBefore = temp[z - 1];
+				valuesBefore = inputValueSolverInfoArray[z - 1];
 			}
 			if (values.getCountUpMax() >= values.getCountDownMin()) {
 				for (int p = values.getCountDownMin(); p <= values.getCountUpMax(); p++) {
@@ -243,7 +263,7 @@ public class PuzzleSolverUtil {
 					}
 				}
 			}
-			if (z == temp.length -1 && values.getCountDownMax() + 1 < statusArrayResult.length) {
+			if (z == inputValueSolverInfoArray.length -1 && values.getCountDownMax() + 1 < statusArrayResult.length) {
 				for (int p = values.getCountDownMax() + 1; p < statusArrayResult.length; p++) {
 					if (!statusArrayResult[p]) {
 						statusArrayResult[p] = true;

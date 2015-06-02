@@ -128,20 +128,26 @@ public class InputValueSolverInfoTest {
 		Assert.assertEquals(indexMaxSecond, inputValueSolverInfo.getIndexMax().intValue());
 	}
 
-	@Test(expected=PuzzleSolverException.class)
-	public void testSetIndexMaxWithIndexTooLowForValue() throws Exception {
-		int inputValueArray = 5;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
-
-		inputValueSolverInfo.setIndexMax(inputValueArray - 2);
-	}
-
 	@Test
 	public void testSetIndexMaxWithIndexJustRightToSolve() throws Exception {
 		int inputValueArray = 5;
+		int indexMinInitial = 2;
 		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInitial);
 
-		inputValueSolverInfo.setIndexMax(inputValueArray - 1);
+		inputValueSolverInfo.setIndexMax(indexMinInitial + inputValueArray - 1);
+
+		Assert.assertTrue(inputValueSolverInfo.isSolved());
+	}
+
+	@Test
+	public void testSetIndexMinWithIndexJustRightToSolve() throws Exception {
+		int inputValueArray = 5;
+		int indexMaxInitial = 8;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMax(indexMaxInitial);
+
+		inputValueSolverInfo.setIndexMin(indexMaxInitial - inputValueArray + 1);
 
 		Assert.assertTrue(inputValueSolverInfo.isSolved());
 	}
@@ -151,4 +157,115 @@ public class InputValueSolverInfoTest {
 	//--------------------------------------------------------
 
 	//TODO: test methods for combinations of indexMin and indexMas that will lead to solved/exception states
+
+	//--------------------------------------------------------
+	// method addSolvedValue
+	//--------------------------------------------------------
+
+
+	@Test
+	public void testAddSolvedValueInsideIndexMinMax() throws Exception {
+		int inputValueArray = 5;
+		int indexMinInput = 2;
+		int indexMaxInput = 8;
+		int solvedValue = 6;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInput);
+		inputValueSolverInfo.setIndexMax(indexMaxInput);
+
+		inputValueSolverInfo.addSolvedValue(solvedValue);
+
+		Assert.assertFalse(inputValueSolverInfo.isSolved());
+	}
+
+	@Test(expected = PuzzleSolverException.class)
+	public void testAddSolvedValueLargerThanMax() throws Exception {
+		int inputValueArray = 5;
+		int indexMinInput = 2;
+		int indexMaxInput = 8;
+		int solvedValue = 9;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInput);
+		inputValueSolverInfo.setIndexMax(indexMaxInput);
+
+		inputValueSolverInfo.addSolvedValue(solvedValue);
+	}
+
+	@Test(expected = PuzzleSolverException.class)
+	public void testAddSolvedValueSmallerThanMin() throws Exception {
+		int inputValueArray = 5;
+		int indexMinInput = 2;
+		int indexMaxInput = 8;
+		int solvedValue = 1;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInput);
+		inputValueSolverInfo.setIndexMax(indexMaxInput);
+
+		inputValueSolverInfo.addSolvedValue(solvedValue);
+	}
+
+	@Test(expected = PuzzleSolverException.class)
+	public void testAddSolvedValueSmallerThan0() throws Exception {
+		int inputValueArray = 5;
+		int indexMinInput = 2;
+		int indexMaxInput = 8;
+		int solvedValue = -1;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInput);
+		inputValueSolverInfo.setIndexMax(indexMaxInput);
+
+		inputValueSolverInfo.addSolvedValue(solvedValue);
+	}
+
+	@Test
+	public void testAddSolvedValueChangesIndexMinAndIndexMax() throws Exception {
+		int inputValueArray = 2;
+		int indexMinInput = 2;
+		int indexMaxInput = 8;
+		int solvedValue = 5;
+		int indexMinOutput = 4;
+		int indexMaxOutput = 6;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInput);
+		inputValueSolverInfo.setIndexMax(indexMaxInput);
+
+		inputValueSolverInfo.addSolvedValue(solvedValue);
+
+		Assert.assertFalse(inputValueSolverInfo.isSolved());
+		Assert.assertEquals(indexMinOutput, inputValueSolverInfo.getIndexMin().intValue());
+		Assert.assertEquals(indexMaxOutput, inputValueSolverInfo.getIndexMax().intValue());
+	}
+
+	@Test
+	public void testAddSolvedValueChangesIndexMinAndIndexMaxAndAddsSolvedValues() throws Exception {
+		int inputValueArray = 3;
+		int indexMinInput = 2;
+		int indexMaxInput = 8;
+		int solvedValue = 3;
+		int indexMinOutput = indexMinInput;
+		int indexMaxOutput = 5;
+		InputValueSolverRange solvedRangeExpected = new InputValueSolverRange(3, 4);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray);
+		inputValueSolverInfo.setIndexMin(indexMinInput);
+		inputValueSolverInfo.setIndexMax(indexMaxInput);
+
+		inputValueSolverInfo.addSolvedValue(solvedValue);
+
+		Assert.assertFalse(inputValueSolverInfo.isSolved());
+		Assert.assertEquals(indexMinOutput, inputValueSolverInfo.getIndexMin().intValue());
+		Assert.assertEquals(indexMaxOutput, inputValueSolverInfo.getIndexMax().intValue());
+		InputValueSolverRange solvedRangeResult = inputValueSolverInfo.getSolvedRangeCopy();
+		assertEquals(solvedRangeExpected, solvedRangeResult);
+	}
+
+	private void assertEquals(InputValueSolverRange expected, InputValueSolverRange actual) {
+		if (expected != null) {
+			Assert.assertNotNull(actual);
+			Assert.assertEquals(expected.getRangeInt(), actual.getRangeInt());
+			Assert.assertEquals(expected.getSolvedMin(), actual.getSolvedMin());
+			Assert.assertEquals(expected.getSolvedMax(), actual.getSolvedMax());
+		} else {
+			Assert.assertNull(actual);
+		}
+	}
 }
