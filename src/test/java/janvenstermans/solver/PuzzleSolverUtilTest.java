@@ -18,7 +18,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayEmptyInput() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] {  };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput();
 		boolean[] statusArrayInput  = new boolean[dimensionInput]; // nothing solved yet
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
 		// create expected values
@@ -41,7 +41,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayFullInput() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 10 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 10 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput]; // nothing solved yet
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
 		// create expected values
@@ -68,7 +68,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayOneNumber() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 7 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 7 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput]; // nothing solved yet
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
 		// create expected values
@@ -91,7 +91,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayNoNumber() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[]{};
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput();
 		boolean[] statusArrayInput = new boolean[dimensionInput]; // nothing solved yet
 		PuzzleSolverUtil.VALUE[] valueArrayInput = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
 		// create expected values
@@ -112,7 +112,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayTwoNumbers() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 5, 3 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 5, 3);
 		boolean[] statusArrayInput  = new boolean[dimensionInput]; // nothing solved yet
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput]; // nothing solved yet
 		// create expected values
@@ -143,7 +143,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayWithSolvedElements1() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 5 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(5 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -176,7 +176,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayWithSolvedElements2() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 5 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 5);
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -212,7 +212,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayWithSolvedElements3() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 1,1,1,2 };
+		InputValueSolverInfo[] inputArrayInput =createInputArrayInput(1,1,1,2 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -253,7 +253,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayWithAllSolvedElements3() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 1,2,1,3 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 1,2,1,3);
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// create expected values
@@ -295,7 +295,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayToAddNoneValues1() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 2,2 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 2,2 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -330,7 +330,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayToAddNoneValues2() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 3, 1 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(3, 1);
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -363,7 +363,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayToAddNoneValues3() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 1, 3 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 1, 3);
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -400,7 +400,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayAllCanBeSolvedAllBlacksAccounted() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 1, 1, 1 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 1, 1 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -434,7 +434,7 @@ public class PuzzleSolverUtilTest {
 	@Test
 	public void testCheckCountOfArrayAllCanBeSolvedAllNonesAccounted() throws Exception {
 		int dimensionInput = 10;
-		int[] inputArrayInput = new int[] { 1, 1, 1 };
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput( 1, 1, 1 );
 		boolean[] statusArrayInput  = new boolean[dimensionInput];
 		PuzzleSolverUtil.VALUE[] valueArrayInput  = new PuzzleSolverUtil.VALUE[dimensionInput];
 		// solved values
@@ -497,7 +497,7 @@ public class PuzzleSolverUtilTest {
 		}
 	}
 
-	private void printInputAndExpectedOutputAsRow(int[] inputArray,
+	private void printInputAndExpectedOutputAsRow(InputValueSolverInfo[] inputArray,
 												  boolean[] statusArrayInput, PuzzleSolverUtil.VALUE[] valueArrayInput,
 												  boolean[] statusArrayExpected, PuzzleSolverUtil.VALUE[] valueArrayExpected) {
 		System.out.println("Input vs expected");
@@ -505,9 +505,18 @@ public class PuzzleSolverUtilTest {
 		PuzzleTestUtil.printArrayAsRow(inputArray, statusArrayExpected, valueArrayExpected);
 	}
 
-	private void printCalculatedOutputAsRow(int[] inputArray, ArrayResult arrayResult) {
+	private void printCalculatedOutputAsRow(InputValueSolverInfo[] inputArray, ArrayResult arrayResult) {
 		System.out.println("Output");
 		PuzzleTestUtil.printArrayAsRow(inputArray, arrayResult.getStatusArray(), arrayResult.getValueArray());
 		System.out.println();
+	}
+
+	private InputValueSolverInfo[] createInputArrayInput(Integer...integers) {
+		int count = integers.length;
+		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[count];
+		for (int i = 0; i < count; i++) {
+			inputValueSolverInfoArray[i] = new InputValueSolverInfo(integers[i]);
+		}
+		return inputValueSolverInfoArray;
 	}
 }

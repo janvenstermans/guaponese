@@ -1,6 +1,7 @@
 package janvenstermans.example;
 
 import janvenstermans.model.PuzzleInput;
+import janvenstermans.solver.PuzzleSolverException;
 
 /**
  * Simple 15 x 15 example.
@@ -10,9 +11,6 @@ import janvenstermans.model.PuzzleInput;
  */
 public final class PuzzleInputSampleA
 {
-	static int dimensionX = 15;
-	static int dimensionY = 15;
-
 	/**
 	 * Arrays of input values, i.e. the numbers on top of the grid.
 	 */
@@ -28,10 +26,12 @@ public final class PuzzleInputSampleA
 			{3,2,3},{1,1,2,1,1},{1,1,2,1,1},{3,2,3},{1,2,1}};
 
 	public static PuzzleInput createPuzzleInput() {
-		PuzzleInput puzzleInput = new PuzzleInput();
-		puzzleInput.setDimensions(dimensionX, dimensionY);
-		puzzleInput.setInputX(inputX);
-		puzzleInput.setInputY(inputY);
+		PuzzleInput puzzleInput = null;
+		try {
+			puzzleInput = new PuzzleInput(inputX, inputY);
+		} catch (PuzzleSolverException e) {
+			e.printStackTrace();
+		}
 		return puzzleInput;
 	}
 

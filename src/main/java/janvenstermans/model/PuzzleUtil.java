@@ -1,5 +1,6 @@
 package janvenstermans.model;
 
+import janvenstermans.solver.InputValueSolverInfo;
 import janvenstermans.solver.PuzzleSolverUtil;
 
 import java.util.Arrays;
@@ -124,6 +125,17 @@ public final class PuzzleUtil {
 			line += String.format("%2s", input[0] > 0 ? input[0] : "");
 			for (int i = 1 ; i < input.length ; i++) {
 				line += String.format("%3s", input[i] > 0 ? input[i] : "");
+			}
+		}
+		return line;
+	}
+
+	public static String formatInputRow(InputValueSolverInfo[] input) {
+		String line = "";
+		if (input.length > 0) {
+			line += String.format("%2s", input[0].getInputValue() > 0 ? input[0].getInputValue() : "");
+			for (int i = 1 ; i < input.length ; i++) {
+				line += String.format("%3s", input[i].getInputValue() > 0 ? input[i].getInputValue() : "");
 			}
 		}
 	   	return line;

@@ -19,39 +19,32 @@ public class PuzzleSolverUtil {
 		NONE, BLACK;
 	}
 
-	public static void checkCount(PuzzleStatus puzzleStatus, PuzzleInput puzzleInput) {
+	public static void checkCount(PuzzleStatus puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
 		// first x, than y
 		for (int column = 0; column < puzzleInput.getDimensionX(); column++) {
-			try {
-				ArrayResult arrayResult = checkCountOfArray(puzzleInput.getInputXOfColumn(column),
-						puzzleStatus.getStatusOfColumn(column), puzzleStatus.geValueOfColumn(column));
-				for (int i = 0 ; i < arrayResult.getStatusArray().length ; i++) {
-					if (arrayResult.getStatusArray()[i]) {
-						puzzleStatus.setFieldStatusAndValue(column, i, true, arrayResult.getValueArray()[i]);
-					}
+			ArrayResult arrayResult = checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
+					puzzleStatus.getStatusOfColumn(column), puzzleStatus.geValueOfColumn(column));
+			for (int i = 0 ; i < arrayResult.getStatusArray().length ; i++) {
+				if (arrayResult.getStatusArray()[i]) {
+					puzzleStatus.setFieldStatusAndValue(column, i, true, arrayResult.getValueArray()[i]);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 		for (int row = 0; row < puzzleInput.getDimensionY(); row++) {
-			try {
-				ArrayResult arrayResult = checkCountOfArray(puzzleInput.getInputYOfRow(row),
-						puzzleStatus.getStatusYOfRow(row), puzzleStatus.getValueYOfRow(row));
-				for (int i = 0 ; i < arrayResult.getStatusArray().length ; i++) {
-					if (arrayResult.getStatusArray()[i]) {
-						puzzleStatus.setFieldStatusAndValue(i, row, true, arrayResult.getValueArray()[i]);
-					}
+			ArrayResult arrayResult = checkCountOfArray(puzzleInput.getSolverInfoYOfRow(row),
+					puzzleStatus.getStatusYOfRow(row), puzzleStatus.getValueYOfRow(row));
+			for (int i = 0 ; i < arrayResult.getStatusArray().length ; i++) {
+				if (arrayResult.getStatusArray()[i]) {
+					puzzleStatus.setFieldStatusAndValue(i, row, true, arrayResult.getValueArray()[i]);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 
 	}
 
-	public static ArrayResult checkCountOfArray(int[] inputArray, boolean[] statusArray, VALUE[] valueArray)
-			throws Exception {
+	public static ArrayResult checkCountOfArray(InputValueSolverInfo[] inputArray, boolean[] statusArray,
+												VALUE[] valueArray)
+			throws PuzzleSolverException {
 		// start with existing values
 		if (isAllSolved(statusArray)) {
 			return new ArrayResult(statusArray, valueArray);
@@ -79,10 +72,10 @@ public class PuzzleSolverUtil {
 		return new ArrayResult(statusArrayResult, valueArrayResult);
 	}
 
-	private static int sumOfInput(int[] inputArray) {
+	private static int sumOfInput(InputValueSolverInfo[] inputArray) {
 		int sum = 0;
-		for (int value : inputArray) {
-			sum += value;
+		for (InputValueSolverInfo value : inputArray) {
+			sum += value.getInputValue();
 		}
 		return sum;
 	}
@@ -109,22 +102,14 @@ public class PuzzleSolverUtil {
 	/**
 	 * Search for BLACK values.
 	 *
-	 * @param inputArray
+	 * @param inputValueSolverInfoArray
 	 * @param statusArrayResult
 	 * @param valueArrayResult
 	 * @throws Exception
 	 */
-	private static void checkForBlackValues(int[] inputArray, boolean[] statusArrayResult,
-											VALUE[] valueArrayResult) throws Exception {
-		// create InputValueSolverInfo objects
-		// TODO: move this up, as part of the general solve strategy
-		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[inputArray.length];
-		for (int k = 0; k < inputArray.length; k++) {
-			InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputArray[k]);
-			inputValueSolverInfo.setIndexMin(0);
-			inputValueSolverInfo.setIndexMax(statusArrayResult.length - 1);
-			inputValueSolverInfoArray[k] = inputValueSolverInfo;
-		}
+	private static void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+											boolean[] statusArrayResult,
+											VALUE[] valueArrayResult) throws PuzzleSolverException {
 		// go through the input values from lowest to highest
 		int countUp = 0;
 		boolean countUpFirst = true;
@@ -167,7 +152,7 @@ public class PuzzleSolverUtil {
 				}
 			}
 			if (numberOfBlackElementDirectlyAfterPosition > inputValueSolverInfo.getInputValue()) {
-			  	throw new Exception();
+			  	throw new PuzzleSolverException("Too many solved values for inputValue");
 			}
 
 			countUp = countUpEnd + 2;
@@ -219,7 +204,7 @@ public class PuzzleSolverUtil {
 			}
 			inputValueSolverInfo.setIndexMax(countDownStart - numberOfBlackElementDirectlyBeforePosition);
 			if (numberOfBlackElementDirectlyBeforePosition > inputValueSolverInfo.getInputValue()) {
-				throw new Exception();
+				throw new PuzzleSolverException("Too many solved values for inputValue");
 			}
 
 			countDown = countDownEnd - 2;
@@ -239,7 +224,7 @@ public class PuzzleSolverUtil {
 							statusArrayResult[p] = true;
 							valueArrayResult[p] = VALUE.NONE;
 						} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
-							throw new Exception("Conflict in status of a cell");
+							throw new PuzzleSolverException("Conflict in status of a cell");
 						}
 					}
 				}
@@ -250,7 +235,7 @@ public class PuzzleSolverUtil {
 						statusArrayResult[p] = true;
 						valueArrayResult[p] = VALUE.NONE;
 					} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
-						throw new Exception("Conflict in status of a cell");
+						throw new PuzzleSolverException("Conflict in status of a cell");
 					}
 				}
 			}
@@ -260,7 +245,7 @@ public class PuzzleSolverUtil {
 						statusArrayResult[p] = true;
 						valueArrayResult[p] = VALUE.NONE;
 					} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
-						throw new Exception("Conflict in status of a cell");
+						throw new PuzzleSolverException("Conflict in status of a cell");
 					}
 				}
 			}
