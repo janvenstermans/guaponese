@@ -120,7 +120,10 @@ public class PuzzleSolverUtil {
 		// TODO: move this up, as part of the general solve strategy
 		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[inputArray.length];
 		for (int k = 0; k < inputArray.length; k++) {
-			inputValueSolverInfoArray[k] = new InputValueSolverInfo(inputArray[k]);
+			InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputArray[k]);
+			inputValueSolverInfo.setIndexMin(0);
+			inputValueSolverInfo.setIndexMax(statusArrayResult.length - 1);
+			inputValueSolverInfoArray[k] = inputValueSolverInfo;
 		}
 		// go through the input values from lowest to highest
 		int countUp = 0;
@@ -167,7 +170,6 @@ public class PuzzleSolverUtil {
 			  	throw new Exception();
 			}
 
-			inputValueSolverInfo.setCountUp(countUpEnd + numberOfBlackElementDirectlyAfterPosition);
 			countUp = countUpEnd + 2;
 			countUpFirst = false;
 		}
@@ -220,30 +222,19 @@ public class PuzzleSolverUtil {
 				throw new Exception();
 			}
 
-			inputValueSolverInfo.setCountDown(countDownEnd - numberOfBlackElementDirectlyBeforePosition);
 			countDown = countDownEnd - 2;
 			countDownFirst = false;
 		}
 		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
-			InputValueSolverInfo values = inputValueSolverInfoArray[z];
-			InputValueSolverInfo valuesBefore = null;
+			InputValueSolverInfo currentSolverInfo = inputValueSolverInfoArray[z];
+			InputValueSolverInfo solverInfoBefore = null;
 			if (z - 1 >= 0) {
-				valuesBefore = inputValueSolverInfoArray[z - 1];
-			}
-			if (values.getCountUpMax() >= values.getCountDownMin()) {
-				for (int p = values.getCountDownMin(); p <= values.getCountUpMax(); p++) {
-					if (!statusArrayResult[p]) {
-						statusArrayResult[p] = true;
-						valueArrayResult[p] = VALUE.BLACK;
-					} else if (!VALUE.BLACK.equals(valueArrayResult[p])) {
-						throw new Exception("Conflict in status of a cell");
-					}
-				}
+				solverInfoBefore = inputValueSolverInfoArray[z - 1];
 			}
 			// check NONE values between this and previous
-			if (valuesBefore != null) {
-				if (valuesBefore.getCountDownMax() + 1 < values.getCountUpMin()) {
-					for (int p = valuesBefore.getCountDownMax() + 1; p < values.getCountUpMin(); p++) {
+			if (solverInfoBefore != null) {
+				if (solverInfoBefore.getIndexMax() + 1 < currentSolverInfo.getIndexMin()) {
+					for (int p = solverInfoBefore.getIndexMax() + 1; p < currentSolverInfo.getIndexMin(); p++) {
 						if (!statusArrayResult[p]) {
 							statusArrayResult[p] = true;
 							valueArrayResult[p] = VALUE.NONE;
@@ -253,8 +244,8 @@ public class PuzzleSolverUtil {
 					}
 				}
 				int i = 0;
-			} else if (values.getCountUpMin() > 0) {
-				for (int p = 0; p < values.getCountUpMin(); p++) {
+			} else if (currentSolverInfo.getIndexMin() > 0) {
+				for (int p = 0; p < currentSolverInfo.getIndexMin(); p++) {
 					if (!statusArrayResult[p]) {
 						statusArrayResult[p] = true;
 						valueArrayResult[p] = VALUE.NONE;
@@ -263,14 +254,24 @@ public class PuzzleSolverUtil {
 					}
 				}
 			}
-			if (z == inputValueSolverInfoArray.length -1 && values.getCountDownMax() + 1 < statusArrayResult.length) {
-				for (int p = values.getCountDownMax() + 1; p < statusArrayResult.length; p++) {
+			if (z == inputValueSolverInfoArray.length -1 && currentSolverInfo.getIndexMax() + 1 < statusArrayResult.length) {
+				for (int p = currentSolverInfo.getIndexMax() + 1; p < statusArrayResult.length; p++) {
 					if (!statusArrayResult[p]) {
 						statusArrayResult[p] = true;
 						valueArrayResult[p] = VALUE.NONE;
 					} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
 						throw new Exception("Conflict in status of a cell");
 					}
+				}
+			}
+		}
+		//copy solved values from InputValueSolverInfo[] to solution:
+		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
+			InputValueSolverRange inputValueSolverRange = inputValueSolverInfo.getSolvedRangeCopy();
+			if (inputValueSolverRange != null) {
+				for (int i = inputValueSolverRange.getSolvedMin() ; i <= inputValueSolverRange.getSolvedMax() ; i++) {
+					statusArrayResult[i] = true;
+					valueArrayResult[i] = VALUE.BLACK;
 				}
 			}
 		}

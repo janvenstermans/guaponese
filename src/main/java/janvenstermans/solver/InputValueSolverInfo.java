@@ -10,9 +10,6 @@ public class InputValueSolverInfo {
 
 	private final int inputValue;
 
-	// TODO remove
-	private int countUpMin, countUpMax, countDownMax, countDownMin;
-
 	private Integer indexMin, indexMax;
 
 	private InputValueSolverRange solvedRange;
@@ -41,16 +38,6 @@ public class InputValueSolverInfo {
 		}
 	}
 
-	public void setCountUp(int endValue) {
-		countUpMax = endValue;
-		countUpMin = endValue - inputValue + 1;
-	}
-
-	public void setCountDown(int endValue) {
-		countDownMin = endValue;
-		countDownMax = endValue + inputValue - 1;
-	}
-
 	public void addSolvedValue(int solvedValue) throws PuzzleSolverException {
 		if (indexMin != null && solvedValue < indexMin) {
 			throw new PuzzleSolverException("The solved index is smaller than current indexMin.");
@@ -76,22 +63,6 @@ public class InputValueSolverInfo {
 		return inputValue;
 	}
 
-	public int getCountUpMin() {
-		return countUpMin;
-	}
-
-	public int getCountUpMax() {
-		return countUpMax;
-	}
-
-	public int getCountDownMax() {
-		return countDownMax;
-	}
-
-	public int getCountDownMin() {
-		return countDownMin;
-	}
-
 	public Integer getIndexMax() {
 		return indexMax;
 	}
@@ -114,7 +85,10 @@ public class InputValueSolverInfo {
 	 * @return copy
 	 */
 	public InputValueSolverRange getSolvedRangeCopy() {
-		return new InputValueSolverRange(solvedRange.getSolvedMin(), solvedRange.getSolvedMax());
+		if (hasSolvedRange()) {
+			return new InputValueSolverRange(solvedRange.getSolvedMin(), solvedRange.getSolvedMax());
+		}
+		return null;
 	}
 
 	//----------------------
