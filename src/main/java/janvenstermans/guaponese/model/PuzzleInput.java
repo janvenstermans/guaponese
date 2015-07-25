@@ -33,7 +33,6 @@ public class PuzzleInput
 			// need dimensions!
 			createSolverInfosFromInputX(inputX);
 			createSolverInfosFromInputY(inputY);
-			int i = 5;
 		} else {
 			throw new PuzzleSolverException("input empty");
 		}

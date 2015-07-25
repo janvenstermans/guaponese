@@ -54,7 +54,7 @@ public class PuzzleSolverUtil {
 		int sum = sumOfInput(inputArray);
 		if (sum > 0) {
 			int solvedSum = sumOfSolved(valueArrayResult, statusArrayResult);
-			// TODO: check for alls not-NONE values
+			// TODO: check for all not-NONE values
 			if (solvedSum == sum) {
 				for (int i = 0; i < statusArrayResult.length; i++) {
 					statusArrayResult[i] = true;

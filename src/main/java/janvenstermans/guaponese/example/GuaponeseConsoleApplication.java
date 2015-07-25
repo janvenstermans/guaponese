@@ -1,5 +1,6 @@
 package janvenstermans.guaponese.example;
 
+import janvenstermans.guaponese.example.extra.PuzzleInputSampleB;
 import janvenstermans.guaponese.model.PuzzleInput;
 import janvenstermans.guaponese.model.PuzzleStatus;
 import janvenstermans.guaponese.model.PuzzleUtil;
@@ -35,7 +36,7 @@ public class GuaponeseConsoleApplication
 		try {
 			// get PuzzleInput
 //			puzzleInput = getUserPuzzleInput();
-			puzzleInput = PuzzleInputSampleA.createPuzzleInput();
+			puzzleInput = PuzzleInputSampleB.createPuzzleInput();
 			// check puzzleInput
 			boolean check = PuzzleUtil.checkInputXAndY(puzzleInput);
 			if (check) {

@@ -22,3 +22,5 @@ listing/
 .settings
 gwt-unitCache
 output.zip
+
+src/main/java/janvenstermans/guaponese/example/extra/
