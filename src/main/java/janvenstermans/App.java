@@ -4,6 +4,9 @@ import janvenstermans.example.PuzzleInputSampleA;
 import janvenstermans.model.PuzzleInput;
 import janvenstermans.model.PuzzleStatus;
 import janvenstermans.model.PuzzleUtil;
+import janvenstermans.solver.GuaponesePuzzleSolutionTimeline;
+import janvenstermans.solver.GuaponesePuzzleSolveStatusStatistics;
+import janvenstermans.solver.GuaponesePuzzleSolveStepMethod;
 import janvenstermans.solver.PuzzleSolverException;
 import janvenstermans.solver.PuzzleSolverUtil;
 
@@ -22,6 +25,8 @@ public class App
 	private String tab = "  ";
 	private Scanner keyboard = new Scanner(System.in);
 
+	private GuaponesePuzzleSolutionTimeline timeline = new GuaponesePuzzleSolutionTimeline();
+
     public static void main( String[] args )
     {
 		new App().run();
@@ -32,21 +37,30 @@ public class App
 			// get PuzzleInput
 //			puzzleInput = getUserPuzzleInput();
 			puzzleInput = PuzzleInputSampleA.createPuzzleInput();
-
 			// check puzzleInput
 			boolean check = PuzzleUtil.checkInputXAndY(puzzleInput);
 			if (check) {
+				boolean stopSolving = false;
+
 				PuzzleStatus puzzleStatus = new PuzzleStatus(puzzleInput);
-				PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
+				while (!stopSolving) {
+					// solve puzzle using a mehtod
+					PuzzleSolverUtil.checkAllLinesCount(puzzleStatus, puzzleInput);
+					GuaponesePuzzleSolveStatusStatistics currentPuzzleStatistics =
+							PuzzleUtil.getStatistics(puzzleInput, puzzleStatus);
+					boolean progression = timeline.addNextStep(GuaponesePuzzleSolveStepMethod.LINE, currentPuzzleStatistics);
 
-				PuzzleSolverUtil.checkCount(puzzleStatus, puzzleInput);
-				PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
+					// print analyse
+					if (progression) {
+						PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
+						PuzzleUtil.printPuzzleStatistics(currentPuzzleStatistics);
+						PuzzleUtil.printEmptyLine();
+					}
 
-				PuzzleSolverUtil.checkCount(puzzleStatus, puzzleInput);
-				PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
-
-				PuzzleSolverUtil.checkCount(puzzleStatus, puzzleInput);
-				PuzzleUtil.printPuzzle(puzzleInput, puzzleStatus);
+					//should iteration stop or not?
+					stopSolving = timeline.isPuzzleSolved() || !progression;
+				}
+				PuzzleUtil.printTimeline(timeline);
 			}
 		} catch (PuzzleSolverException e) {
 			e.printStackTrace();
@@ -71,4 +85,5 @@ public class App
 //		} while (menu != 0);
 //		return puzzleInput;
 //	}
+
 }

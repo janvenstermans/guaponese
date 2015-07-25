@@ -1,9 +1,12 @@
 package janvenstermans.model;
 
+import janvenstermans.solver.GuaponesePuzzleSolutionTimeline;
+import janvenstermans.solver.GuaponesePuzzleSolveStatusStatistics;
 import janvenstermans.solver.InputValueSolverInfo;
 import janvenstermans.solver.PuzzleSolverUtil;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Contains solution tactics.
@@ -18,8 +21,23 @@ public final class PuzzleUtil {
 	public static boolean checkInputXAndY(PuzzleInput puzzleInput) {
 		int xCount = countInput(puzzleInput.getInputValueSolverInfoArrayX());
 		int yCount = countInput(puzzleInput.getInputValueSolverInfoArrayY());
-		System.out.println("PuzzleInput check: xCount: " + xCount + " - yCount: " + yCount);
+		printLine("PuzzleInput check: xCount: " + xCount + " - yCount: " + yCount);
 		return xCount == yCount;
+	}
+
+	public static GuaponesePuzzleSolveStatusStatistics getStatistics(PuzzleInput puzzleInput, PuzzleStatus puzzleStatus) {
+		GuaponesePuzzleSolveStatusStatistics puzzleStatistics = new GuaponesePuzzleSolveStatusStatistics(puzzleInput.getDimensionX(), puzzleInput.getDimensionY());
+		boolean[][] fieldStatusArray = puzzleStatus.getFieldStatusArray();
+		long fieldsSolved = 0;
+		for (int i = 0; i < fieldStatusArray.length; i++) {
+			for (int j = 0; j < fieldStatusArray[i].length; j++) {
+				if (fieldStatusArray[i][j]) {
+					fieldsSolved++;
+				}
+			}
+		}
+		puzzleStatistics.setFieldsAmountSolved(fieldsSolved);
+		return puzzleStatistics;
 	}
 
 	public static void printPuzzle(PuzzleInput puzzleInput, PuzzleStatus puzzleStatus) {
@@ -35,13 +53,50 @@ public final class PuzzleUtil {
 		yHeaderLength += " | ".length();
 		String xTab = String.format("%" + yHeaderLength + "s", "");
 		for (String line : xHeader) {
-			System.out.println(xTab + line);
+			printLine(xTab + line);
 		}
 		final char[] array = new char[xHeader[0].length()];
 		Arrays.fill(array, '-');
-		System.out.println(xTab + new String(array));
+		printLine(xTab + new String(array));
 		for (int i = 0 ; i < yHeader.length ; i++) {
-			System.out.println(yHeader[i] + " | " + puzzleLines[i]);
+			printLine(yHeader[i] + " | " + puzzleLines[i]);
+		}
+	}
+
+	public static void printEmptyLine() {
+		printLine("");
+	}
+
+	public static void printPuzzleStatistics(GuaponesePuzzleSolveStatusStatistics puzzleStatistics) {
+		if (puzzleStatistics.getFieldsAmountSolved() != null) {
+			printLine("fields solved: " +
+					puzzleStatistics.getFieldsAmountSolved() + " out of " + puzzleStatistics.getFieldsAmountTotal() +
+			" (" + (100.0 * puzzleStatistics.getFieldsAmountSolved() / puzzleStatistics.getFieldsAmountTotal()) +" %)");
+		}
+		if (puzzleStatistics.getRowsAmountSolved() != null) {
+			printLine("rows solved: " +
+					puzzleStatistics.getRowsAmountSolved() + " out of " + puzzleStatistics.getRowsAmountTotal() +
+			" (" + (100.0 * puzzleStatistics.getRowsAmountSolved() / puzzleStatistics.getRowsAmountTotal()) +" %)");
+		}
+		if (puzzleStatistics.getColumnsAmountSolved() != null) {
+			printLine("columns solved: " +
+					puzzleStatistics.getColumnsAmountSolved() + " out of " + puzzleStatistics.getColumnsAmountTotal() +
+			" (" + (100.0 * puzzleStatistics.getColumnsAmountSolved() / puzzleStatistics.getColumnsAmountTotal()) +" %)");
+		}
+	}
+
+	public static void printTimeline(GuaponesePuzzleSolutionTimeline timeline) {
+		printLine("Puzzle Timeline Feedback");
+		boolean puzzleSolved = timeline.isPuzzleSolved();
+		printLine(puzzleSolved ? "puzzle is solved" : "puzzle is not solved");
+		List<GuaponesePuzzleSolutionTimeline.GuaponesePuzzleSolvingStep> stepList = timeline.getSolvingStepList();
+		printLine(stepList.size() + " steps executed." +
+				(stepList.size() > 0 ? " Progression" : ""));
+		for (int i = 0; i < stepList.size() ; i++) {
+			GuaponesePuzzleSolutionTimeline.GuaponesePuzzleSolvingStep step = stepList.get(i);
+			double solutionPercentage = 100.0 * step.getStatusStatistics().getFieldsAmountSolved() /
+					step.getStatusStatistics().getFieldsAmountTotal();
+			printLine("step " + i + ": method:" + step.getMethod() + " solution%:" + solutionPercentage);
 		}
 	}
 
@@ -153,5 +208,9 @@ public final class PuzzleUtil {
 			}
 		}
 		return "";
+	}
+
+	private static void printLine(String line) {
+		System.out.println(line);
 	}
 }

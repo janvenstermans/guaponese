@@ -19,7 +19,7 @@ public class PuzzleSolverUtil {
 		NONE, BLACK;
 	}
 
-	public static void checkCount(PuzzleStatus puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
+	public static void checkAllLinesCount(PuzzleStatus puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
 		// first x, than y
 		for (int column = 0; column < puzzleInput.getDimensionX(); column++) {
 			ArrayResult arrayResult = checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
