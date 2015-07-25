@@ -1,6 +1,6 @@
-package janvenstermans.model;
+package janvenstermans.guaponese.model;
 
-import janvenstermans.solver.PuzzleSolverUtil;
+import janvenstermans.guaponese.solver.PuzzleSolverUtil;
 
 /**
  * Console version of application.

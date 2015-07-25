@@ -1,9 +1,9 @@
-package janvenstermans.model;
+package janvenstermans.guaponese.model;
 
-import janvenstermans.solver.GuaponesePuzzleSolutionTimeline;
-import janvenstermans.solver.GuaponesePuzzleSolveStatusStatistics;
-import janvenstermans.solver.InputValueSolverInfo;
-import janvenstermans.solver.PuzzleSolverUtil;
+import janvenstermans.guaponese.solver.GuaponesePuzzleSolutionTimeline;
+import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStatusStatistics;
+import janvenstermans.guaponese.solver.InputValueSolverInfo;
+import janvenstermans.guaponese.solver.PuzzleSolverUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -71,17 +71,17 @@ public final class PuzzleUtil {
 		if (puzzleStatistics.getFieldsAmountSolved() != null) {
 			printLine("fields solved: " +
 					puzzleStatistics.getFieldsAmountSolved() + " out of " + puzzleStatistics.getFieldsAmountTotal() +
-			" (" + (100.0 * puzzleStatistics.getFieldsAmountSolved() / puzzleStatistics.getFieldsAmountTotal()) +" %)");
+					" (" + (100.0 * puzzleStatistics.getFieldsAmountSolved() / puzzleStatistics.getFieldsAmountTotal()) + " %)");
 		}
 		if (puzzleStatistics.getRowsAmountSolved() != null) {
 			printLine("rows solved: " +
 					puzzleStatistics.getRowsAmountSolved() + " out of " + puzzleStatistics.getRowsAmountTotal() +
-			" (" + (100.0 * puzzleStatistics.getRowsAmountSolved() / puzzleStatistics.getRowsAmountTotal()) +" %)");
+					" (" + (100.0 * puzzleStatistics.getRowsAmountSolved() / puzzleStatistics.getRowsAmountTotal()) + " %)");
 		}
 		if (puzzleStatistics.getColumnsAmountSolved() != null) {
 			printLine("columns solved: " +
 					puzzleStatistics.getColumnsAmountSolved() + " out of " + puzzleStatistics.getColumnsAmountTotal() +
-			" (" + (100.0 * puzzleStatistics.getColumnsAmountSolved() / puzzleStatistics.getColumnsAmountTotal()) +" %)");
+					" (" + (100.0 * puzzleStatistics.getColumnsAmountSolved() / puzzleStatistics.getColumnsAmountTotal()) + " %)");
 		}
 	}
 

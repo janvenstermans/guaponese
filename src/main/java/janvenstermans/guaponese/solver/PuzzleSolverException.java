@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 /**
  * Exception when solving the puzzle.

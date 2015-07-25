@@ -1,8 +1,8 @@
 package janvenstermans;
 
-import janvenstermans.model.PuzzleUtil;
-import janvenstermans.solver.InputValueSolverInfo;
-import janvenstermans.solver.PuzzleSolverUtil;
+import janvenstermans.guaponese.model.PuzzleUtil;
+import janvenstermans.guaponese.solver.InputValueSolverInfo;
+import janvenstermans.guaponese.solver.PuzzleSolverUtil;
 
 /**
  * Unit test for simple App.

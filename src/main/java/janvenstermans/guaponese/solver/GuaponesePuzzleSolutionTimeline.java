@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 import java.util.ArrayList;
 import java.util.Collections;

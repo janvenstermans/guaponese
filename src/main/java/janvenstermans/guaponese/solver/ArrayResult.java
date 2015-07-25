@@ -1,9 +1,4 @@
-package janvenstermans.solver;
-
-import janvenstermans.model.PuzzleInput;
-import janvenstermans.model.PuzzleStatus;
-
-import java.util.Arrays;
+package janvenstermans.guaponese.solver;
 
 /**
  * Contains solution tactics.

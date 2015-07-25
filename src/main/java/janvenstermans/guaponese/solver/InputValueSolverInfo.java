@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 /**
  * Information linked to an input value during solving the puzzle.

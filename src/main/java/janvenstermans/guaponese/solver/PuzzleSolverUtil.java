@@ -1,7 +1,7 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
-import janvenstermans.model.PuzzleInput;
-import janvenstermans.model.PuzzleStatus;
+import janvenstermans.guaponese.model.PuzzleInput;
+import janvenstermans.guaponese.model.PuzzleStatus;
 
 import java.util.Arrays;
 

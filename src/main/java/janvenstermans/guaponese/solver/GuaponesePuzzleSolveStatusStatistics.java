@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 /**
  * Console version of application.

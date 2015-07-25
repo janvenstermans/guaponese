@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 import junit.framework.Assert;
 import org.junit.Test;

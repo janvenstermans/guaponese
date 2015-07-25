@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 /**
  * Methods that can be used for solving a Guaponese puzzle.

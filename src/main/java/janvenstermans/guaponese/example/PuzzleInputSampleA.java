@@ -1,7 +1,7 @@
-package janvenstermans.example;
+package janvenstermans.guaponese.example;
 
-import janvenstermans.model.PuzzleInput;
-import janvenstermans.solver.PuzzleSolverException;
+import janvenstermans.guaponese.model.PuzzleInput;
+import janvenstermans.guaponese.solver.PuzzleSolverException;
 
 /**
  * Simple 15 x 15 example.

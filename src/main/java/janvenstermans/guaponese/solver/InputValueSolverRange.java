@@ -1,4 +1,4 @@
-package janvenstermans.solver;
+package janvenstermans.guaponese.solver;
 
 /**
  * Helper class that keeps the min and max values of solved values.

@@ -1,7 +1,7 @@
-package janvenstermans.model;
+package janvenstermans.guaponese.model;
 
-import janvenstermans.solver.InputValueSolverInfo;
-import janvenstermans.solver.PuzzleSolverException;
+import janvenstermans.guaponese.solver.InputValueSolverInfo;
+import janvenstermans.guaponese.solver.PuzzleSolverException;
 
 /**
  * Console version of application.

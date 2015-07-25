@@ -1,14 +1,13 @@
-package janvenstermans;
+package janvenstermans.guaponese.example;
 
-import janvenstermans.example.PuzzleInputSampleA;
-import janvenstermans.model.PuzzleInput;
-import janvenstermans.model.PuzzleStatus;
-import janvenstermans.model.PuzzleUtil;
-import janvenstermans.solver.GuaponesePuzzleSolutionTimeline;
-import janvenstermans.solver.GuaponesePuzzleSolveStatusStatistics;
-import janvenstermans.solver.GuaponesePuzzleSolveStepMethod;
-import janvenstermans.solver.PuzzleSolverException;
-import janvenstermans.solver.PuzzleSolverUtil;
+import janvenstermans.guaponese.model.PuzzleInput;
+import janvenstermans.guaponese.model.PuzzleStatus;
+import janvenstermans.guaponese.model.PuzzleUtil;
+import janvenstermans.guaponese.solver.GuaponesePuzzleSolutionTimeline;
+import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStatusStatistics;
+import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStepMethod;
+import janvenstermans.guaponese.solver.PuzzleSolverException;
+import janvenstermans.guaponese.solver.PuzzleSolverUtil;
 
 import java.util.Scanner;
 
@@ -18,7 +17,7 @@ import java.util.Scanner;
  * @author Jan Venstermans
  *
  */
-public class App
+public class GuaponeseConsoleApplication
 {
 
 	private PuzzleInput puzzleInput;
@@ -29,7 +28,7 @@ public class App
 
     public static void main( String[] args )
     {
-		new App().run();
+		new GuaponeseConsoleApplication().run();
     }
 
 	public void run() {
