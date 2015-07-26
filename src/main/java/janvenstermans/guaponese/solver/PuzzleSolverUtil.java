@@ -1,7 +1,8 @@
 package janvenstermans.guaponese.solver;
 
+import janvenstermans.guaponese.model.PuzzleFieldStatus;
 import janvenstermans.guaponese.model.PuzzleInput;
-import janvenstermans.guaponese.model.PuzzleStatus;
+import janvenstermans.guaponese.model.PuzzleFieldBoard;
 
 import java.util.Arrays;
 
@@ -19,57 +20,55 @@ public class PuzzleSolverUtil {
 		NONE, BLACK;
 	}
 
-	public static void checkAllLinesCount(PuzzleStatus puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
+	public static void checkAllLinesCount(PuzzleFieldBoard puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
 		// first x, than y
 		for (int column = 0; column < puzzleInput.getDimensionX(); column++) {
-			ArrayResult arrayResult = checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
-					puzzleStatus.getStatusOfColumn(column), puzzleStatus.geValueOfColumn(column));
-			for (int i = 0 ; i < arrayResult.getStatusArray().length ; i++) {
-				if (arrayResult.getStatusArray()[i]) {
-					puzzleStatus.setFieldStatusAndValue(column, i, true, arrayResult.getValueArray()[i]);
+			PuzzleFieldStatus[] arrayResult = checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
+					puzzleStatus.getStatusOfColumn(column));
+			for (int i = 0 ; i < arrayResult.length ; i++) {
+				if (arrayResult[i].isSolved()) {
+					puzzleStatus.setFieldStatusAndValue(column, i, arrayResult[i].getFieldValue());
 				}
 			}
 		}
 		for (int row = 0; row < puzzleInput.getDimensionY(); row++) {
-			ArrayResult arrayResult = checkCountOfArray(puzzleInput.getSolverInfoYOfRow(row),
-					puzzleStatus.getStatusYOfRow(row), puzzleStatus.getValueYOfRow(row));
-			for (int i = 0 ; i < arrayResult.getStatusArray().length ; i++) {
-				if (arrayResult.getStatusArray()[i]) {
-					puzzleStatus.setFieldStatusAndValue(i, row, true, arrayResult.getValueArray()[i]);
+			PuzzleFieldStatus[] arrayResult = checkCountOfArray(puzzleInput.getSolverInfoYOfRow(row),
+					puzzleStatus.getStatusYOfRow(row));
+			for (int i = 0 ; i < arrayResult.length ; i++) {
+				if (arrayResult[i].isSolved()) {
+					puzzleStatus.setFieldStatusAndValue(i, row, arrayResult[i].getFieldValue());
 				}
 			}
 		}
 
 	}
 
-	public static ArrayResult checkCountOfArray(InputValueSolverInfo[] inputArray, boolean[] statusArray,
-												VALUE[] valueArray)
+	public static PuzzleFieldStatus[] checkCountOfArray(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray)
 			throws PuzzleSolverException {
 		// start with existing values
 		if (isAllSolved(statusArray)) {
-			return new ArrayResult(statusArray, valueArray);
+			return statusArray;
 		}
-		boolean[] statusArrayResult = Arrays.copyOf(statusArray, statusArray.length);
-		VALUE[] valueArrayResult = Arrays.copyOf(valueArray, statusArray.length);
 		int sum = sumOfInput(inputArray);
 		if (sum > 0) {
-			int solvedSum = sumOfSolved(valueArrayResult, statusArrayResult);
+			int solvedSum = sumOfSolved(statusArray);
 			// TODO: check for all not-NONE values
 			if (solvedSum == sum) {
-				for (int i = 0; i < statusArrayResult.length; i++) {
-					statusArrayResult[i] = true;
-					if (valueArrayResult[i] == null) {
-						valueArrayResult[i] = VALUE.NONE;
+				for (int i = 0; i < statusArray.length; i++) {
+					if (!statusArray[i].isSolved()) {
+						statusArray[i].setFieldValue(VALUE.NONE);
 					}
 				}
 			} else {
-				checkForBlackValues(inputArray, statusArrayResult, valueArrayResult);
+				checkForBlackValues(inputArray, statusArray);
 			}
 		} else {
-			Arrays.fill(statusArrayResult, true);
-			Arrays.fill(valueArrayResult, VALUE.NONE);
+			// solve all: all are null value
+			for (PuzzleFieldStatus fieldStatus : statusArray) {
+				fieldStatus.setFieldValue(VALUE.NONE);
+			}
 		}
-		return new ArrayResult(statusArrayResult, valueArrayResult);
+		return statusArray;
 	}
 
 	private static int sumOfInput(InputValueSolverInfo[] inputArray) {
@@ -80,19 +79,19 @@ public class PuzzleSolverUtil {
 		return sum;
 	}
 
-	private static int sumOfSolved(VALUE[] valueArray, boolean[] statusArray) {
+	private static int sumOfSolved(PuzzleFieldStatus[] statusArray) {
 		int sum = 0;
-		for (int i = 0 ; i < valueArray.length ; i++) {
-			if (statusArray[i] && VALUE.BLACK.equals(valueArray[i])) {
+		for (int i = 0 ; i < statusArray.length ; i++) {
+			if (statusArray[i].isSolved() && VALUE.BLACK.equals(statusArray[i].getFieldValue())) {
 				sum++;
 			}
 		}
 		return sum;
 	}
 
-	private static boolean isAllSolved(boolean[] statusArray) {
-		for (boolean status : statusArray) {
-			if (!status) {
+	private static boolean isAllSolved(PuzzleFieldStatus[] statusArray) {
+		for (PuzzleFieldStatus status : statusArray) {
+			if (!status.isSolved()) {
 				return false;
 			}
 		}
@@ -104,12 +103,10 @@ public class PuzzleSolverUtil {
 	 *
 	 * @param inputValueSolverInfoArray
 	 * @param statusArrayResult
-	 * @param valueArrayResult
 	 * @throws Exception
 	 */
 	private static void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
-											boolean[] statusArrayResult,
-											VALUE[] valueArrayResult) throws PuzzleSolverException {
+											PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		// go through the input values from lowest to highest
 		int countUp = 0;
 		boolean countUpFirst = true;
@@ -119,12 +116,12 @@ public class PuzzleSolverUtil {
 
 			// move up until it is possible to fit in the inputValue
 			Integer lastSolvedWithStatusNone =
-					getLastSolvedNoneElement(statusArrayResult,  valueArrayResult, countUpStart, countUpEnd);
+					getLastSolvedNoneElement(statusArrayResult, countUpStart, countUpEnd);
 			while (lastSolvedWithStatusNone != null) {
 				countUpStart = lastSolvedWithStatusNone + 1;
 				countUpEnd = countUpStart + inputValueSolverInfo.getInputValue() - 1;
 				lastSolvedWithStatusNone =
-						getLastSolvedNoneElement(statusArrayResult,  valueArrayResult, countUpStart, countUpEnd);
+						getLastSolvedNoneElement(statusArrayResult, countUpStart, countUpEnd);
 			}
 			// end move up
 
@@ -134,7 +131,7 @@ public class PuzzleSolverUtil {
 			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
 			if (countUpFirst) {
 				for (int i = countUpStart; i <= countUpEnd; i++) {
-					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					if (statusArrayResult[i].isSolved() && VALUE.BLACK.equals(statusArrayResult[i].getFieldValue())) {
 						inputValueSolverInfo.addSolvedValue(i);
 					}
 				}
@@ -142,11 +139,11 @@ public class PuzzleSolverUtil {
 
 			// check adjacing solved values
 			int numberOfBlackElementDirectlyAfterPosition = getNumberOfBlackElementDirectlyAfterPosition(
-					statusArrayResult, valueArrayResult, countUpEnd);
+					statusArrayResult, countUpEnd);
 			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
 			if (countUpFirst) {
 				for (int i = countUpEnd + 1; i <= countUpEnd + numberOfBlackElementDirectlyAfterPosition; i++) {
-					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					if (statusArrayResult[i].isSolved() && VALUE.BLACK.equals(statusArrayResult[i].getFieldValue())) {
 						inputValueSolverInfo.addSolvedValue(i);
 					}
 				}
@@ -170,12 +167,12 @@ public class PuzzleSolverUtil {
 
 			// move down until it is possible to fit in the inputValue
 			Integer firstSolvedNoneElement =
-					getFirstSolvedNoneElement(statusArrayResult,  valueArrayResult, countDownEnd, countDownStart);
+					getFirstSolvedNoneElement(statusArrayResult, countDownEnd, countDownStart);
 			while (firstSolvedNoneElement != null) {
 				countDownStart = firstSolvedNoneElement - 1;
 				countDownEnd = countDownStart - (inputValueSolverInfo.getInputValue() - 1);
 				firstSolvedNoneElement =
-						getFirstSolvedNoneElement(statusArrayResult,  valueArrayResult, countDownEnd, countDownStart);
+						getFirstSolvedNoneElement(statusArrayResult, countDownEnd, countDownStart);
 			}
 			// end move down
 
@@ -185,7 +182,7 @@ public class PuzzleSolverUtil {
 			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
 			if (countDownFirst) {
 				for (int i = countDownStart; i >= countDownEnd; i--) {
-					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					if (statusArrayResult[i].isSolved() && VALUE.BLACK.equals(statusArrayResult[i].getFieldValue())) {
 						inputValueSolverInfo.addSolvedValue(i);
 					}
 				}
@@ -193,11 +190,11 @@ public class PuzzleSolverUtil {
 
 			// check adjacing solved values
 			int numberOfBlackElementDirectlyBeforePosition = getNumberOfBlackElementDirectlyBeforePosition(
-					statusArrayResult, valueArrayResult, countDownEnd);
+					statusArrayResult, countDownEnd);
 			// it is possible for the first TODO: change to the first unsolved inputValueSolverInfo
 			if (countDownFirst) {
 				for (int i = countDownStart - 1; i >= countDownEnd - numberOfBlackElementDirectlyBeforePosition; i--) {
-					if (statusArrayResult[i] && VALUE.BLACK.equals(valueArrayResult[i])) {
+					if (statusArrayResult[i].isSolved() && VALUE.BLACK.equals(statusArrayResult[i].getFieldValue())) {
 						inputValueSolverInfo.addSolvedValue(i);
 					}
 				}
@@ -220,10 +217,9 @@ public class PuzzleSolverUtil {
 			if (solverInfoBefore != null) {
 				if (solverInfoBefore.getIndexMax() + 1 < currentSolverInfo.getIndexMin()) {
 					for (int p = solverInfoBefore.getIndexMax() + 1; p < currentSolverInfo.getIndexMin(); p++) {
-						if (!statusArrayResult[p]) {
-							statusArrayResult[p] = true;
-							valueArrayResult[p] = VALUE.NONE;
-						} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
+						if (!statusArrayResult[p].isSolved()) {
+							statusArrayResult[p].setFieldValue(VALUE.NONE);
+						} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
 							throw new PuzzleSolverException("Conflict in status of a cell");
 						}
 					}
@@ -231,20 +227,18 @@ public class PuzzleSolverUtil {
 				int i = 0;
 			} else if (currentSolverInfo.getIndexMin() > 0) {
 				for (int p = 0; p < currentSolverInfo.getIndexMin(); p++) {
-					if (!statusArrayResult[p]) {
-						statusArrayResult[p] = true;
-						valueArrayResult[p] = VALUE.NONE;
-					} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
+					if (!statusArrayResult[p].isSolved()) {
+						statusArrayResult[p].setFieldValue(VALUE.NONE);
+					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
 						throw new PuzzleSolverException("Conflict in status of a cell");
 					}
 				}
 			}
 			if (z == inputValueSolverInfoArray.length -1 && currentSolverInfo.getIndexMax() + 1 < statusArrayResult.length) {
 				for (int p = currentSolverInfo.getIndexMax() + 1; p < statusArrayResult.length; p++) {
-					if (!statusArrayResult[p]) {
-						statusArrayResult[p] = true;
-						valueArrayResult[p] = VALUE.NONE;
-					} else if (!VALUE.NONE.equals(valueArrayResult[p])) {
+					if (!statusArrayResult[p].isSolved()) {
+						statusArrayResult[p].setFieldValue(VALUE.NONE);
+					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
 						throw new PuzzleSolverException("Conflict in status of a cell");
 					}
 				}
@@ -255,18 +249,16 @@ public class PuzzleSolverUtil {
 			InputValueSolverRange inputValueSolverRange = inputValueSolverInfo.getSolvedRangeCopy();
 			if (inputValueSolverRange != null) {
 				for (int i = inputValueSolverRange.getSolvedMin() ; i <= inputValueSolverRange.getSolvedMax() ; i++) {
-					statusArrayResult[i] = true;
-					valueArrayResult[i] = VALUE.BLACK;
+					statusArrayResult[i].setFieldValue(VALUE.BLACK);
 				}
 			}
 		}
 	}
 
-	private static Integer getFirstSolvedNoneElement(boolean[] statusArray, VALUE[] valueArray, int start, int end) {
-		if (statusArray.length > 0 && valueArray.length > 0 && statusArray.length == valueArray.length
-				&& start < statusArray.length && end < statusArray.length) {
+	private static Integer getFirstSolvedNoneElement(PuzzleFieldStatus[] statusArray, int start, int end) {
+		if (statusArray.length > 0 && start < statusArray.length && end < statusArray.length) {
 			for (int i = start; i <= end; i++) {
-				if (statusArray[i] && VALUE.NONE.equals(valueArray[i])){
+				if (statusArray[i].isSolved() && VALUE.NONE.equals(statusArray[i].getFieldValue())){
 					return i;
 				}
 			}
@@ -274,11 +266,10 @@ public class PuzzleSolverUtil {
 		return null;
 	}
 
-	private static Integer getLastSolvedNoneElement(boolean[] statusArray, VALUE[] valueArray, int start, int end) {
-		if (statusArray.length > 0 && valueArray.length > 0 && statusArray.length == valueArray.length
-				&& start < statusArray.length && end < statusArray.length) {
+	private static Integer getLastSolvedNoneElement(PuzzleFieldStatus[] statusArray, int start, int end) {
+		if (statusArray.length > 0 && start < statusArray.length && end < statusArray.length) {
 			for (int i = end; i >= start; i--) {
-				if (statusArray[i] && VALUE.NONE.equals(valueArray[i])){
+				if (statusArray[i].isSolved() && VALUE.NONE.equals(statusArray[i].getFieldValue())){
 					return i;
 				}
 			}
@@ -286,22 +277,24 @@ public class PuzzleSolverUtil {
 		return null;
 	}
 
-	private static int getNumberOfBlackElementDirectlyAfterPosition(boolean[] statusArray, VALUE[] valueArray,
+	private static int getNumberOfBlackElementDirectlyAfterPosition(PuzzleFieldStatus[] statusArray,
 																		int currentPosition) {
 		int nextPosition = currentPosition + 1;
 		int result = 0;
-		while (nextPosition < statusArray.length && statusArray[nextPosition] && VALUE.BLACK.equals(valueArray[nextPosition])) {
+		while (nextPosition < statusArray.length && statusArray[nextPosition].isSolved()
+				&& VALUE.BLACK.equals(statusArray[nextPosition].getFieldValue())) {
 			nextPosition++;
 			result++;
 		}
 		return result;
 	}
 
-	private static int getNumberOfBlackElementDirectlyBeforePosition(boolean[] statusArray, VALUE[] valueArray,
+	private static int getNumberOfBlackElementDirectlyBeforePosition(PuzzleFieldStatus[] statusArray,
 																		int currentPosition) {
 		int nextPosition = currentPosition - 1;
 		int result = 0;
-		while (nextPosition >= 0 && statusArray[nextPosition] && VALUE.BLACK.equals(valueArray[nextPosition])) {
+		while (nextPosition >= 0 && statusArray[nextPosition].isSolved()
+				&& VALUE.BLACK.equals(statusArray[nextPosition].getFieldValue())) {
 			nextPosition--;
 			result++;
 		}

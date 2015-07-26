@@ -2,7 +2,7 @@ package janvenstermans.guaponese.example;
 
 import janvenstermans.guaponese.example.extra.PuzzleInputSampleB;
 import janvenstermans.guaponese.model.PuzzleInput;
-import janvenstermans.guaponese.model.PuzzleStatus;
+import janvenstermans.guaponese.model.PuzzleFieldBoard;
 import janvenstermans.guaponese.model.PuzzleUtil;
 import janvenstermans.guaponese.solver.GuaponesePuzzleSolutionTimeline;
 import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStatusStatistics;
@@ -42,7 +42,7 @@ public class GuaponeseConsoleApplication
 			if (check) {
 				boolean stopSolving = false;
 
-				PuzzleStatus puzzleStatus = new PuzzleStatus(puzzleInput);
+				PuzzleFieldBoard puzzleStatus = new PuzzleFieldBoard(puzzleInput);
 				while (!stopSolving) {
 					// solve puzzle using a mehtod
 					PuzzleSolverUtil.checkAllLinesCount(puzzleStatus, puzzleInput);

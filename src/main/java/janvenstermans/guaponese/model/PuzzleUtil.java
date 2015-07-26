@@ -25,13 +25,13 @@ public final class PuzzleUtil {
 		return xCount == yCount;
 	}
 
-	public static GuaponesePuzzleSolveStatusStatistics getStatistics(PuzzleInput puzzleInput, PuzzleStatus puzzleStatus) {
+	public static GuaponesePuzzleSolveStatusStatistics getStatistics(PuzzleInput puzzleInput, PuzzleFieldBoard puzzleStatus) {
 		GuaponesePuzzleSolveStatusStatistics puzzleStatistics = new GuaponesePuzzleSolveStatusStatistics(puzzleInput.getDimensionX(), puzzleInput.getDimensionY());
-		boolean[][] fieldStatusArray = puzzleStatus.getFieldStatusArray();
+		PuzzleFieldStatus[][] fieldStatusArray = puzzleStatus.getFieldStatusArray();
 		long fieldsSolved = 0;
 		for (int i = 0; i < fieldStatusArray.length; i++) {
 			for (int j = 0; j < fieldStatusArray[i].length; j++) {
-				if (fieldStatusArray[i][j]) {
+				if (fieldStatusArray[i][j].isSolved()) {
 					fieldsSolved++;
 				}
 			}
@@ -40,7 +40,7 @@ public final class PuzzleUtil {
 		return puzzleStatistics;
 	}
 
-	public static void printPuzzle(PuzzleInput puzzleInput, PuzzleStatus puzzleStatus) {
+	public static void printPuzzle(PuzzleInput puzzleInput, PuzzleFieldBoard puzzleStatus) {
 		String[] xHeader = inputAsStringsX(puzzleInput.getInputValueSolverInfoArrayX());
 		String[] yHeader = inputAsStringsY(puzzleInput.getInputValueSolverInfoArrayY());
 		String[] puzzleLines = valuesAsString(puzzleStatus, puzzleInput.getDimensionY());
@@ -110,12 +110,11 @@ public final class PuzzleUtil {
 		return xCount;
 	}
 
-	private static String[] valuesAsString(PuzzleStatus puzzleStatus, int rows) {
+	private static String[] valuesAsString(PuzzleFieldBoard puzzleStatus, int rows) {
 		String[] result = new String[rows];
 		for (int row = 0 ; row < rows; row++) {
-			boolean[] statusses = puzzleStatus.getStatusYOfRow(row);
-			PuzzleSolverUtil.VALUE[] values = puzzleStatus.getValueYOfRow(row);
-			result[row] = formatStatusRow(statusses, values);
+			PuzzleFieldStatus[] statusses = puzzleStatus.getStatusYOfRow(row);
+			result[row] = formatStatusRow(statusses);
 		}
 		return result;
 	}
@@ -187,12 +186,12 @@ public final class PuzzleUtil {
 	   	return line;
 	}
 
-	public static String formatStatusRow(boolean[] status, PuzzleSolverUtil.VALUE[] values) {
+	public static String formatStatusRow(PuzzleFieldStatus[] status) {
 		String line = "";
 		if (status.length > 0) {
-			line += String.format("%2s", status[0] ? toString(values[0]) : "");
+			line += String.format("%2s", status[0].isSolved() ? toString(status[0].getFieldValue()) : "");
 			for (int i = 1 ; i < status.length ; i++) {
-				line += String.format("%3s", status[i] ? toString(values[i]) : "");
+				line += String.format("%3s", status[i].isSolved() ? toString(status[i].getFieldValue()) : "");
 			}
 		}
 		return line;
