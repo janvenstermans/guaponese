@@ -351,6 +351,27 @@ public class PuzzleSolverUtilTest {
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
 
+	/**
+	 * Problem was throwing exception throw new PuzzleSolverException("Too many solved values for inputValue");
+	 * @throws Exception
+	 */
+	@Test
+	public void testCheckCountOfArraySpecial2() throws Exception {
+		int dimensionInput = 20;
+		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(4, 3, 3, 1);
+		PuzzleFieldStatus[] statusArrayInput  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		// solved values
+		statusArrayInput[15].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[14].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		// create expected values
+		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		// solved values
+		statusArrayExpected[15].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[14].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+
+		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
+	}
+
 	//--------------------------------------------------------
 	// private method
 	//--------------------------------------------------------
