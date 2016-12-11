@@ -113,7 +113,7 @@ public final class PuzzleUtil {
 	private static String[] valuesAsString(PuzzleFieldBoard puzzleStatus, int rows) {
 		String[] result = new String[rows];
 		for (int row = 0 ; row < rows; row++) {
-			PuzzleFieldStatus[] statusses = puzzleStatus.getStatusYOfRow(row);
+			PuzzleFieldStatus[] statusses = puzzleStatus.getStatusArrayOfRow(row);
 			result[row] = formatStatusRow(statusses);
 		}
 		return result;

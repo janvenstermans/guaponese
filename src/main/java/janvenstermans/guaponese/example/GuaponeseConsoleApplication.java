@@ -42,9 +42,9 @@ public class GuaponeseConsoleApplication
 			if (check) {
 				boolean stopSolving = false;
 
-				PuzzleFieldBoard puzzleStatus = new PuzzleFieldBoard(puzzleInput);
+				PuzzleFieldBoard puzzleStatus = PuzzleFieldBoard.createPuzzleFieldBoard(puzzleInput);
 				while (!stopSolving) {
-					// solve puzzle using a mehtod
+					// solve puzzle using a method
 					PuzzleSolverUtil.checkAllLinesCount(puzzleStatus, puzzleInput);
 					GuaponesePuzzleSolveStatusStatistics currentPuzzleStatistics =
 							PuzzleUtil.getStatistics(puzzleInput, puzzleStatus);

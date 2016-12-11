@@ -22,7 +22,7 @@ public class PuzzleSolverUtil {
 		// first x, than y
 		for (int column = 0; column < puzzleInput.getDimensionX(); column++) {
 			PuzzleFieldStatus[] arrayResult = checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
-					puzzleStatus.getStatusOfColumn(column));
+					puzzleStatus.getStatusArrayOfColumn(column));
 			for (int i = 0 ; i < arrayResult.length ; i++) {
 				if (arrayResult[i].isSolved()) {
 					puzzleStatus.setFieldStatusAndValue(column, i, arrayResult[i].getFieldValue());
@@ -31,7 +31,7 @@ public class PuzzleSolverUtil {
 		}
 		for (int row = 0; row < puzzleInput.getDimensionY(); row++) {
 			PuzzleFieldStatus[] arrayResult = checkCountOfArray(puzzleInput.getSolverInfoYOfRow(row),
-					puzzleStatus.getStatusYOfRow(row));
+					puzzleStatus.getStatusArrayOfRow(row));
 			for (int i = 0 ; i < arrayResult.length ; i++) {
 				if (arrayResult[i].isSolved()) {
 					puzzleStatus.setFieldStatusAndValue(i, row, arrayResult[i].getFieldValue());
@@ -105,104 +105,10 @@ public class PuzzleSolverUtil {
 	 */
 	private static void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
 											PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
-		// go through the input values from lowest to highest
-		int countUp = 0;
-		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
-			if (inputValueSolverInfo.isSolved()) {
-				countUp = inputValueSolverInfo.getIndexMax() + 2;
-			} else {
-				int countUpStart = countUp;
-				int inputLength = inputValueSolverInfo.getInputValue();
+		goThroughInputValuesFromLowestToHighest(inputValueSolverInfoArray, statusArrayResult);
+		goThroughInputValuesFromHighestToLowest(inputValueSolverInfoArray, statusArrayResult);
+		checkNoneValues(inputValueSolverInfoArray, statusArrayResult);
 
-				int countUpCorrection = countUpStart;
-				do {
-					countUpStart = countUpCorrection;
-					countUpCorrection = checkNoneValuesCountUp(statusArrayResult, countUpStart, inputLength);
-					countUpCorrection = checkBlackValuesCountUp(statusArrayResult, countUpCorrection, inputLength);
-				} while (countUpCorrection > countUpStart);
-
-				// register solved items to InputValueSolverInfo
-				inputValueSolverInfo.setIndexMin(countUpStart);
-				for (int k = countUpStart; k < countUpStart + inputLength; k++) {
-					if (statusArrayResult[k].isSolved() && VALUE.BLACK.equals(statusArrayResult[k].getFieldValue())) {
-						inputValueSolverInfo.addSolvedValue(k);
-					}
-				}
-
-				//update countUp value
-				countUp = countUpStart + inputLength + 1;
-			}
-		}
-		// end count up
-
-		// go through the input values from highest to lowest
-		int countDown = statusArrayResult.length - 1;
-//		boolean countDownFirst = true;
-		for (int m = inputValueSolverInfoArray.length - 1; m >= 0; m--) {
-			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
-			if (inputValueSolverInfo.isSolved()) {
-				countDown = inputValueSolverInfo.getIndexMin() - 2;
-			} else {
-				int countDownStart = countDown;
-				int inputLength = inputValueSolverInfo.getInputValue();
-
-				int countDownCorrection = countDownStart;
-				do {
-					countDownStart = countDownCorrection;
-					countDownCorrection = checkNoneValuesCountDown(statusArrayResult, countDownStart, inputLength);
-					countDownCorrection = checkBlackValuesCountDown(statusArrayResult, countDownCorrection, inputLength);
-				} while (countDownCorrection < countDownStart);
-
-
-				// register solved items to InputValueSolverInfo
-				inputValueSolverInfo.setIndexMax(countDownStart);
-				for (int k = countDownStart; k > countDownStart - inputLength; k--) {
-					if (statusArrayResult[k].isSolved() && VALUE.BLACK.equals(statusArrayResult[k].getFieldValue())) {
-						inputValueSolverInfo.addSolvedValue(k);
-					}
-				}
-
-				//update countUp value
-				countDown = countDownStart - inputLength - 1;
-			}
-		}
-		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
-			InputValueSolverInfo currentSolverInfo = inputValueSolverInfoArray[z];
-			InputValueSolverInfo solverInfoBefore = null;
-			if (z - 1 >= 0) {
-				solverInfoBefore = inputValueSolverInfoArray[z - 1];
-			}
-			// check NONE values between this and previous
-			if (solverInfoBefore != null) {
-				if (solverInfoBefore.getIndexMax() + 1 < currentSolverInfo.getIndexMin()) {
-					for (int p = solverInfoBefore.getIndexMax() + 1; p < currentSolverInfo.getIndexMin(); p++) {
-						if (!statusArrayResult[p].isSolved()) {
-							statusArrayResult[p].setFieldValue(VALUE.NONE);
-						} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
-							throw new PuzzleSolverException("Conflict in status of a cell");
-						}
-					}
-				}
-				int i = 0;
-			} else if (currentSolverInfo.getIndexMin() > 0) {
-				for (int p = 0; p < currentSolverInfo.getIndexMin(); p++) {
-					if (!statusArrayResult[p].isSolved()) {
-						statusArrayResult[p].setFieldValue(VALUE.NONE);
-					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
-						throw new PuzzleSolverException("Conflict in status of a cell");
-					}
-				}
-			}
-			if (z == inputValueSolverInfoArray.length -1 && currentSolverInfo.getIndexMax() + 1 < statusArrayResult.length) {
-				for (int p = currentSolverInfo.getIndexMax() + 1; p < statusArrayResult.length; p++) {
-					if (!statusArrayResult[p].isSolved()) {
-						statusArrayResult[p].setFieldValue(VALUE.NONE);
-					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
-						throw new PuzzleSolverException("Conflict in status of a cell");
-					}
-				}
-			}
-		}
 		//copy solved values from InputValueSolverInfo[] to solution:
 		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
 			InputValueSolverRange inputValueSolverRange = inputValueSolverInfo.getSolvedRangeCopy();
@@ -372,5 +278,110 @@ public class PuzzleSolverUtil {
 			}
 		}
 		return countDownIndex;
+	}
+
+	private static void goThroughInputValuesFromLowestToHighest(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+		// go through the input values from lowest to highest
+		int countUp = 0;
+		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
+			if (inputValueSolverInfo.isSolved()) {
+				countUp = inputValueSolverInfo.getIndexMax() + 2;
+			} else {
+				int countUpStart = countUp;
+				int inputLength = inputValueSolverInfo.getInputValue();
+
+				int countUpCorrection = countUpStart;
+				do {
+					countUpStart = countUpCorrection;
+					countUpCorrection = checkNoneValuesCountUp(statusArrayResult, countUpStart, inputLength);
+					countUpCorrection = checkBlackValuesCountUp(statusArrayResult, countUpCorrection, inputLength);
+				} while (countUpCorrection > countUpStart);
+
+				// register solved items to InputValueSolverInfo
+				inputValueSolverInfo.setIndexMin(countUpStart);
+				for (int k = countUpStart; k < countUpStart + inputLength; k++) {
+					if (statusArrayResult[k].isSolved() && VALUE.BLACK.equals(statusArrayResult[k].getFieldValue())) {
+						inputValueSolverInfo.addSolvedValue(k);
+					}
+				}
+
+				//update countUp value
+				countUp = countUpStart + inputLength + 1;
+			}
+		}
+		// end count up
+
+	}
+
+	private static void goThroughInputValuesFromHighestToLowest(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+		// go through the input values from highest to lowest
+		int countDown = statusArrayResult.length - 1;
+		for (int m = inputValueSolverInfoArray.length - 1; m >= 0; m--) {
+			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
+			if (inputValueSolverInfo.isSolved()) {
+				countDown = inputValueSolverInfo.getIndexMin() - 2;
+			} else {
+				int countDownStart = countDown;
+				int inputLength = inputValueSolverInfo.getInputValue();
+
+				int countDownCorrection = countDownStart;
+				do {
+					countDownStart = countDownCorrection;
+					countDownCorrection = checkNoneValuesCountDown(statusArrayResult, countDownStart, inputLength);
+					countDownCorrection = checkBlackValuesCountDown(statusArrayResult, countDownCorrection, inputLength);
+				} while (countDownCorrection < countDownStart);
+
+
+				// register solved items to InputValueSolverInfo
+				inputValueSolverInfo.setIndexMax(countDownStart);
+				for (int k = countDownStart; k > countDownStart - inputLength; k--) {
+					if (statusArrayResult[k].isSolved() && VALUE.BLACK.equals(statusArrayResult[k].getFieldValue())) {
+						inputValueSolverInfo.addSolvedValue(k);
+					}
+				}
+
+				//update countDown value
+				countDown = countDownStart - inputLength - 1;
+			}
+		}
+	}
+
+	private static void checkNoneValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException  {
+		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
+			InputValueSolverInfo currentSolverInfo = inputValueSolverInfoArray[z];
+			InputValueSolverInfo solverInfoBefore = null;
+			if (z - 1 >= 0) {
+				solverInfoBefore = inputValueSolverInfoArray[z - 1];
+			}
+			// check NONE values between this and previous
+			if (solverInfoBefore != null) {
+				if (solverInfoBefore.getIndexMax() + 1 < currentSolverInfo.getIndexMin()) {
+					for (int p = solverInfoBefore.getIndexMax() + 1; p < currentSolverInfo.getIndexMin(); p++) {
+						if (!statusArrayResult[p].isSolved()) {
+							statusArrayResult[p].setFieldValue(VALUE.NONE);
+						} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
+							throw new PuzzleSolverException("Conflict in status of a cell");
+						}
+					}
+				}
+			} else if (currentSolverInfo.getIndexMin() > 0) {
+				for (int p = 0; p < currentSolverInfo.getIndexMin(); p++) {
+					if (!statusArrayResult[p].isSolved()) {
+						statusArrayResult[p].setFieldValue(VALUE.NONE);
+					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
+						throw new PuzzleSolverException("Conflict in status of a cell");
+					}
+				}
+			}
+			if (z == inputValueSolverInfoArray.length -1 && currentSolverInfo.getIndexMax() + 1 < statusArrayResult.length) {
+				for (int p = currentSolverInfo.getIndexMax() + 1; p < statusArrayResult.length; p++) {
+					if (!statusArrayResult[p].isSolved()) {
+						statusArrayResult[p].setFieldValue(VALUE.NONE);
+					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
+						throw new PuzzleSolverException("Conflict in status of a cell");
+					}
+				}
+			}
+		}
 	}
 }
