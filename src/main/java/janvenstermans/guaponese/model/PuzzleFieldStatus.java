@@ -1,7 +1,5 @@
 package janvenstermans.guaponese.model;
 
-import janvenstermans.guaponese.solver.PuzzleSolverUtil;
-
 /**
  * Contains info of the status of an individual puzzle field.
  *
@@ -14,7 +12,7 @@ public class PuzzleFieldStatus
 	/**
 	 * Nullable enum indicating the solution value of the element.
 	 */
-	private PuzzleSolverUtil.VALUE fieldValue;
+	private PuzzleFieldStatusValue fieldValue;
 
 	final private int x, y;
 
@@ -31,11 +29,11 @@ public class PuzzleFieldStatus
 		return y;
 	}
 
-	public PuzzleSolverUtil.VALUE getFieldValue() {
+	public PuzzleFieldStatusValue getFieldValue() {
 		return fieldValue;
 	}
 
-	public void setFieldValue(PuzzleSolverUtil.VALUE fieldValue) {
+	public void setFieldValue(PuzzleFieldStatusValue fieldValue) {
 		this.fieldValue = fieldValue;
 	}
 

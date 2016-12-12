@@ -3,7 +3,6 @@ package janvenstermans.guaponese.model;
 import janvenstermans.guaponese.solver.GuaponesePuzzleSolutionTimeline;
 import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStatusStatistics;
 import janvenstermans.guaponese.solver.InputValueSolverInfo;
-import janvenstermans.guaponese.solver.PuzzleSolverUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -197,7 +196,7 @@ public final class PuzzleUtil {
 		return line;
 	}
 
-	private static String toString(PuzzleSolverUtil.VALUE value) {
+	private static String toString(PuzzleFieldStatusValue value) {
 		if (value != null) {
 			switch (value) {
 			   case NONE:

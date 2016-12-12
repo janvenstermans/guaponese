@@ -2,15 +2,16 @@ package janvenstermans.guaponese.solver;
 
 import janvenstermans.PuzzleTestUtil;
 import janvenstermans.guaponese.model.PuzzleFieldStatus;
+import janvenstermans.guaponese.model.PuzzleFieldStatusValue;
 import junit.framework.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 /**
  * Unit test for simple App.
  */
-public class PuzzleSolverUtilTest {
+public class PuzzleSolverRowServiceImplCheckCountOfArrayTest {
+	
+	private PuzzleRowSolverServiceImpl puzzleSolverRowService = new PuzzleRowSolverServiceImpl();
 
 	//--------------------------------------------------------
 	// method checkCountOfArray for specials
@@ -20,11 +21,11 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayEmptyInput() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput();
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 0 ; j < dimensionInput; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -34,11 +35,11 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayFullInput() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(10);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 0 ; j < dimensionInput; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -52,11 +53,11 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayOneNumber() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(7);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 3 ; j < 7; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -66,11 +67,11 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayNoNumber() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput();
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (PuzzleFieldStatus fieldStatus : statusArrayExpected) {
-			fieldStatus.setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			fieldStatus.setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -81,14 +82,14 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayTwoNumbers() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(5, 3);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 1 ; j < 5; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		for (int j = 7 ; j < 9; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -102,18 +103,18 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayWithSolvedElements1() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(5);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[2].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayInput[2].setFieldValue(PuzzleFieldStatusValue.NONE);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[2].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.NONE);
 		for (int j = 0 ; j <= 2; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 		for (int j = 5 ; j <= 7; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -123,18 +124,18 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayWithSolvedElements2() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(5);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[6].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayInput[6].setFieldValue(PuzzleFieldStatusValue.NONE);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[6].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.NONE);
 		for (int j = 1 ; j <= 4; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		for (int j = 7 ; j < dimensionInput; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -147,21 +148,21 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayWithSolvedElements3() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 1, 1, 2);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[5].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayInput[9].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayInput[5].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayInput[9].setFieldValue(PuzzleFieldStatusValue.NONE);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[0].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[1].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[3].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[4].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[5].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[7].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[9].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayExpected[0].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[3].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[5].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[9].setFieldValue(PuzzleFieldStatusValue.NONE);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}*/
@@ -170,20 +171,20 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayWithAllSolvedElements3() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 2, 1, 3);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[0].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[1].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[3].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[4].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[5].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[6].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[7] .setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[8].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[9].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[0].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[5].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[7] .setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[9].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -194,19 +195,19 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayToAddNoneValues1() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(2, 2);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[1].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[7].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[1].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		for (int j = 3 ; j <= 5; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
-		statusArrayExpected[7].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[9].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+		statusArrayExpected[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[9].setFieldValue(PuzzleFieldStatusValue.NONE);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -215,19 +216,19 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayToAddNoneValues2() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(3, 1);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int j = 3 ; j <= 5; j++) {
-			statusArrayInput[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayInput[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int j = 0 ; j <= 2; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 		for (int j = 3 ; j <= 5; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -237,19 +238,19 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayToAddNoneValues3() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 3);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int j = 4 ; j <= 6; j++) {
-			statusArrayInput[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayInput[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int j = 4 ; j <= 6; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		for (int j = 7 ; j <= 9; j++) {
-			statusArrayExpected[j].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
@@ -260,22 +261,22 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayToBlackValues3() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(2, 2);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[3].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[7].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[8].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[0].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[1].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[3].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[5].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[6].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[7].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[8].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[9].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[0].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[5].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[9].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -288,20 +289,20 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayAllCanBeSolvedAllBlacksAccounted() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 1, 1);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[4].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[6].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int i = 0 ; i < dimensionInput; i++) {
-			statusArrayExpected[i].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[i].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
-		statusArrayExpected[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[4].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[6].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -310,23 +311,23 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayAllCanBeSolvedAllNonesAccounted() throws Exception {
 		int dimensionInput = 10;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 1, 1);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int i = 0 ; i < dimensionInput; i++) {
-			statusArrayInput[i].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayInput[i].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
 		statusArrayInput[2].setFieldValue(null);
 		statusArrayInput[4].setFieldValue(null);
 		statusArrayInput[6].setFieldValue(null);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int i = 0 ; i < dimensionInput; i++) {
-			statusArrayExpected[i].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
+			statusArrayExpected[i].setFieldValue(PuzzleFieldStatusValue.NONE);
 		}
-		statusArrayExpected[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[4].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[6].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -339,18 +340,18 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArrayMiddleNoneValue() throws Exception {
 		int dimensionInput = 15;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(3, 2, 1, 1); //the 1's are unimportant
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[1].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[6].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[1].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[2].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[4].setFieldValue(PuzzleSolverUtil.VALUE.NONE);
-		statusArrayExpected[6].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -363,15 +364,15 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArraySpecial1() throws Exception {
 		int dimensionInput = 20;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(1, 3, 3, 4);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[4].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[5].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[5].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[4].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[5].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[5].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -384,15 +385,15 @@ public class PuzzleSolverUtilTest {
 	public void testCheckCountOfArraySpecial2() throws Exception {
 		int dimensionInput = 20;
 		InputValueSolverInfo[] inputArrayInput = createInputArrayInput(4, 3, 3, 1);
-		PuzzleFieldStatus[] statusArrayInput = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayInput[15].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayInput[14].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayInput[15].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[14].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		PuzzleFieldStatus[] statusArrayExpected  = createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
-		statusArrayExpected[15].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
-		statusArrayExpected[14].setFieldValue(PuzzleSolverUtil.VALUE.BLACK);
+		statusArrayExpected[15].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[14].setFieldValue(PuzzleFieldStatusValue.BLACK);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, statusArrayExpected);
 	}
@@ -400,14 +401,6 @@ public class PuzzleSolverUtilTest {
 	//--------------------------------------------------------
 	// private method
 	//--------------------------------------------------------
-
-	private PuzzleFieldStatus[] createEmptyColumnPuzzleFieldStatusArray(int dimension) {
-		PuzzleFieldStatus[] statusArray = new PuzzleFieldStatus[dimension];
-		for (int i = 0; i < dimension; i++) {
-			statusArray[i] = new PuzzleFieldStatus(i, 0);
-		}
-		return statusArray;
-	}
 
 	private void assertStatusArray(PuzzleFieldStatus[] expected, PuzzleFieldStatus[] result) {
 		if (expected != null) {
@@ -457,7 +450,7 @@ public class PuzzleSolverUtilTest {
 	}
 
 	private void executeCallAndAnalyse(InputValueSolverInfo[] inputArrayInput, PuzzleFieldStatus[] statusArrayInput, PuzzleFieldStatus[] statusArrayExpected) throws PuzzleSolverException {
-		PuzzleFieldStatus[] arrayResult = PuzzleSolverUtil.checkCountOfArray(inputArrayInput, statusArrayInput);
+		PuzzleFieldStatus[] arrayResult = puzzleSolverRowService.checkCountOfArray(inputArrayInput, statusArrayInput);
 
 		printInputAndExpectedOutputAsRow(inputArrayInput, statusArrayInput, statusArrayExpected);
 		printCalculatedOutputAsRow(inputArrayInput, arrayResult);

@@ -1,8 +1,7 @@
 package janvenstermans.guaponese.solver;
 
 import janvenstermans.guaponese.model.PuzzleFieldStatus;
-import janvenstermans.guaponese.model.PuzzleInput;
-import janvenstermans.guaponese.model.PuzzleFieldBoard;
+import janvenstermans.guaponese.model.PuzzleFieldStatusValue;
 
 /**
  * Contains solution tactics.
@@ -10,38 +9,10 @@ import janvenstermans.guaponese.model.PuzzleFieldBoard;
  * @author Jan Venstermans
  *
  */
-public class PuzzleSolverUtil {
-	public enum Dimension {
-		X, Y;
-	}
-	public enum VALUE {
-		NONE, BLACK;
-	}
+public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 
-	public static void checkAllLinesCount(PuzzleFieldBoard puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
-		// first x, than y
-		for (int column = 0; column < puzzleInput.getDimensionX(); column++) {
-			PuzzleFieldStatus[] arrayResult = checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
-					puzzleStatus.getStatusArrayOfColumn(column));
-			for (int i = 0 ; i < arrayResult.length ; i++) {
-				if (arrayResult[i].isSolved()) {
-					puzzleStatus.setFieldStatusAndValue(column, i, arrayResult[i].getFieldValue());
-				}
-			}
-		}
-		for (int row = 0; row < puzzleInput.getDimensionY(); row++) {
-			PuzzleFieldStatus[] arrayResult = checkCountOfArray(puzzleInput.getSolverInfoYOfRow(row),
-					puzzleStatus.getStatusArrayOfRow(row));
-			for (int i = 0 ; i < arrayResult.length ; i++) {
-				if (arrayResult[i].isSolved()) {
-					puzzleStatus.setFieldStatusAndValue(i, row, arrayResult[i].getFieldValue());
-				}
-			}
-		}
-
-	}
-
-	public static PuzzleFieldStatus[] checkCountOfArray(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray)
+	@Override
+	public PuzzleFieldStatus[] checkCountOfArray(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray)
 			throws PuzzleSolverException {
 		// start with existing values
 		if (isAllSolved(statusArray)) {
@@ -54,7 +25,7 @@ public class PuzzleSolverUtil {
 			if (solvedSum == sum) {
 				for (int i = 0; i < statusArray.length; i++) {
 					if (!statusArray[i].isSolved()) {
-						statusArray[i].setFieldValue(VALUE.NONE);
+						statusArray[i].setFieldValue(PuzzleFieldStatusValue.NONE);
 					}
 				}
 			} else {
@@ -63,38 +34,15 @@ public class PuzzleSolverUtil {
 		} else {
 			// solve all: all are null value
 			for (PuzzleFieldStatus fieldStatus : statusArray) {
-				fieldStatus.setFieldValue(VALUE.NONE);
+				fieldStatus.setFieldValue(PuzzleFieldStatusValue.NONE);
 			}
 		}
 		return statusArray;
 	}
 
-	private static int sumOfInput(InputValueSolverInfo[] inputArray) {
-		int sum = 0;
-		for (InputValueSolverInfo value : inputArray) {
-			sum += value.getInputValue();
-		}
-		return sum;
-	}
-
-	private static int sumOfSolved(PuzzleFieldStatus[] statusArray) {
-		int sum = 0;
-		for (int i = 0 ; i < statusArray.length ; i++) {
-			if (statusArray[i].isSolved() && VALUE.BLACK.equals(statusArray[i].getFieldValue())) {
-				sum++;
-			}
-		}
-		return sum;
-	}
-
-	private static boolean isAllSolved(PuzzleFieldStatus[] statusArray) {
-		for (PuzzleFieldStatus status : statusArray) {
-			if (!status.isSolved()) {
-				return false;
-			}
-		}
-		return true;
-	}
+	//---------------------------------------
+	// public methods
+	//---------------------------------------
 
 	/**
 	 * Search for BLACK values.
@@ -103,7 +51,7 @@ public class PuzzleSolverUtil {
 	 * @param statusArrayResult
 	 * @throws Exception
 	 */
-	private static void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+	public void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
 											PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		goThroughInputValuesFromLowestToHighest(inputValueSolverInfoArray, statusArrayResult);
 		goThroughInputValuesFromHighestToLowest(inputValueSolverInfoArray, statusArrayResult);
@@ -114,10 +62,86 @@ public class PuzzleSolverUtil {
 			InputValueSolverRange inputValueSolverRange = inputValueSolverInfo.getSolvedRangeCopy();
 			if (inputValueSolverRange != null) {
 				for (int i = inputValueSolverRange.getSolvedMin() ; i <= inputValueSolverRange.getSolvedMax() ; i++) {
-					statusArrayResult[i].setFieldValue(VALUE.BLACK);
+					statusArrayResult[i].setFieldValue(PuzzleFieldStatusValue.BLACK);
 				}
 			}
 		}
+	}
+
+	public void goThroughInputValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+																PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+		goThroughInputValuesFromLowestToHighest(inputValueSolverInfoArray, statusArrayResult);
+		goThroughInputValuesFromHighestToLowest(inputValueSolverInfoArray, statusArrayResult);
+	}
+
+	public void checkNoneValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException  {
+		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
+			InputValueSolverInfo currentSolverInfo = inputValueSolverInfoArray[z];
+			InputValueSolverInfo solverInfoBefore = null;
+			if (z - 1 >= 0) {
+				solverInfoBefore = inputValueSolverInfoArray[z - 1];
+			}
+			// check NONE values between this and previous
+			if (solverInfoBefore != null) {
+				if (solverInfoBefore.getIndexMax() + 1 < currentSolverInfo.getIndexMin()) {
+					for (int p = solverInfoBefore.getIndexMax() + 1; p < currentSolverInfo.getIndexMin(); p++) {
+						if (!statusArrayResult[p].isSolved()) {
+							statusArrayResult[p].setFieldValue(PuzzleFieldStatusValue.NONE);
+						} else if (!PuzzleFieldStatusValue.NONE.equals(statusArrayResult[p].getFieldValue())) {
+							throw new PuzzleSolverException("Conflict in status of a cell");
+						}
+					}
+				}
+			} else if (currentSolverInfo.getIndexMin() > 0) {
+				for (int p = 0; p < currentSolverInfo.getIndexMin(); p++) {
+					if (!statusArrayResult[p].isSolved()) {
+						statusArrayResult[p].setFieldValue(PuzzleFieldStatusValue.NONE);
+					} else if (!PuzzleFieldStatusValue.NONE.equals(statusArrayResult[p].getFieldValue())) {
+						throw new PuzzleSolverException("Conflict in status of a cell");
+					}
+				}
+			}
+			if (z == inputValueSolverInfoArray.length -1 && currentSolverInfo.getIndexMax() + 1 < statusArrayResult.length) {
+				for (int p = currentSolverInfo.getIndexMax() + 1; p < statusArrayResult.length; p++) {
+					if (!statusArrayResult[p].isSolved()) {
+						statusArrayResult[p].setFieldValue(PuzzleFieldStatusValue.NONE);
+					} else if (!PuzzleFieldStatusValue.NONE.equals(statusArrayResult[p].getFieldValue())) {
+						throw new PuzzleSolverException("Conflict in status of a cell");
+					}
+				}
+			}
+		}
+	}
+
+	//-------------------------------------------
+	// private methods
+	//-------------------------------------------
+
+	private int sumOfInput(InputValueSolverInfo[] inputArray) {
+		int sum = 0;
+		for (InputValueSolverInfo value : inputArray) {
+			sum += value.getInputValue();
+		}
+		return sum;
+	}
+
+	private int sumOfSolved(PuzzleFieldStatus[] statusArray) {
+		int sum = 0;
+		for (int i = 0 ; i < statusArray.length ; i++) {
+			if (statusArray[i].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArray[i].getFieldValue())) {
+				sum++;
+			}
+		}
+		return sum;
+	}
+
+	private boolean isAllSolved(PuzzleFieldStatus[] statusArray) {
+		for (PuzzleFieldStatus status : statusArray) {
+			if (!status.isSolved()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -127,11 +151,11 @@ public class PuzzleSolverUtil {
 	 * @param length length of the positions under investigation
 	 * @return
 	 */
-	private static Integer getFirstSolvedNoneElement(PuzzleFieldStatus[] statusArray, int end, int length) {
+	private Integer getFirstSolvedNoneElement(PuzzleFieldStatus[] statusArray, int end, int length) {
 		int start = end - (length - 1);
 		if (statusArray.length > 0 && start < statusArray.length && end < statusArray.length) {
 			for (int i = start; i <= end; i++) {
-				if (statusArray[i].isSolved() && VALUE.NONE.equals(statusArray[i].getFieldValue())){
+				if (statusArray[i].isSolved() && PuzzleFieldStatusValue.NONE.equals(statusArray[i].getFieldValue())){
 					return i;
 				}
 			}
@@ -146,11 +170,11 @@ public class PuzzleSolverUtil {
 	 * @param length length of the positions under investigation
 	 * @return
 	 */
-	private static Integer getLastSolvedNoneElement(PuzzleFieldStatus[] statusArray, int start, int length) {
+	private Integer getLastSolvedNoneElement(PuzzleFieldStatus[] statusArray, int start, int length) {
 		int end = start + length - 1;
 		if (statusArray.length > 0 && start < statusArray.length && end < statusArray.length) {
 			for (int i = end; i >= start; i--) {
-				if (statusArray[i].isSolved() && VALUE.NONE.equals(statusArray[i].getFieldValue())){
+				if (statusArray[i].isSolved() && PuzzleFieldStatusValue.NONE.equals(statusArray[i].getFieldValue())){
 					return i;
 				}
 			}
@@ -164,44 +188,44 @@ public class PuzzleSolverUtil {
 	 * @param currentPosition
 	 * @return
 	 */
-	private static int getNumberOfBlackElementDirectlyAfterPosition(PuzzleFieldStatus[] statusArray,
-																	int currentPosition) {
+	private int getNumberOfBlackElementDirectlyAfterPosition(PuzzleFieldStatus[] statusArray,
+															 int currentPosition) {
 		int nextPosition = currentPosition + 1;
 		int result = 0;
 		while (nextPosition < statusArray.length && statusArray[nextPosition].isSolved()
-				&& VALUE.BLACK.equals(statusArray[nextPosition].getFieldValue())) {
+				&& PuzzleFieldStatusValue.BLACK.equals(statusArray[nextPosition].getFieldValue())) {
 			nextPosition++;
 			result++;
 		}
 		return result;
 	}
 
-	private static int getNumberOfBlackElementDirectlyBeforePosition(PuzzleFieldStatus[] statusArray,
-																		int currentPosition) {
+	private int getNumberOfBlackElementDirectlyBeforePosition(PuzzleFieldStatus[] statusArray,
+															  int currentPosition) {
 		int nextPosition = currentPosition - 1;
 		int result = 0;
 		while (nextPosition >= 0 && statusArray[nextPosition].isSolved()
-				&& VALUE.BLACK.equals(statusArray[nextPosition].getFieldValue())) {
+				&& PuzzleFieldStatusValue.BLACK.equals(statusArray[nextPosition].getFieldValue())) {
 			nextPosition--;
 			result++;
 		}
 		return result;
 	}
 
-	private static Integer getFirstBlackIndexInSection(PuzzleFieldStatus[] statusArray,
-																		int startIndex, int length) {
+	private Integer getFirstBlackIndexInSection(PuzzleFieldStatus[] statusArray,
+												int startIndex, int length) {
 		for (int i = startIndex; i < startIndex + length; i++) {
-			if (statusArray[i].isSolved() && statusArray[i].equals(VALUE.BLACK)) {
+			if (statusArray[i].isSolved() && statusArray[i].equals(PuzzleFieldStatusValue.BLACK)) {
 				return i;
 			}
 		}
 		return null;
 	}
 
-	private static Integer getLastBlackIndexInSection(PuzzleFieldStatus[] statusArray,
-																		int endIndex, int length) {
-		for (int i = endIndex; i > endIndex - length + length; i--) {
-			if (statusArray[i].isSolved() && statusArray[i].equals(VALUE.BLACK)) {
+	private Integer getLastBlackIndexInSection(PuzzleFieldStatus[] statusArray,
+											   int endIndex, int length) {
+		for (int i = endIndex; i > endIndex - length; i--) {
+			if (statusArray[i].isSolved() && statusArray[i].equals(PuzzleFieldStatusValue.BLACK)) {
 				return i;
 			}
 		}
@@ -215,7 +239,7 @@ public class PuzzleSolverUtil {
 	 * @param inputLength
 	 * @return
 	 */
-	private static int checkNoneValuesCountUp(PuzzleFieldStatus[] statusArrayResult, int countUpIndex, int inputLength) {
+	private int checkNoneValuesCountUp(PuzzleFieldStatus[] statusArrayResult, int countUpIndex, int inputLength) {
 		Integer lastSolvedWithStatusNone =
 				getLastSolvedNoneElement(statusArrayResult, countUpIndex, inputLength);
 		while (lastSolvedWithStatusNone != null) {
@@ -226,7 +250,7 @@ public class PuzzleSolverUtil {
 		return countUpIndex;
 	}
 
-	private static int checkNoneValuesCountDown(PuzzleFieldStatus[] statusArrayResult, int countDownIndex, int inputLength) {
+	private int checkNoneValuesCountDown(PuzzleFieldStatus[] statusArrayResult, int countDownIndex, int inputLength) {
 		Integer firstSolvedNoneElement =
 				getFirstSolvedNoneElement(statusArrayResult, countDownIndex, inputLength);
 		while (firstSolvedNoneElement != null) {
@@ -244,7 +268,7 @@ public class PuzzleSolverUtil {
 	 * @param inputLength
 	 * @return corrected countUpIndex
 	 */
-	private static int checkBlackValuesCountUp(PuzzleFieldStatus[] statusArrayResult, int countUpIndex, int inputLength) {
+	private int checkBlackValuesCountUp(PuzzleFieldStatus[] statusArrayResult, int countUpIndex, int inputLength) {
 		Integer firstBlackValueInDirectRange = getFirstBlackIndexInSection(statusArrayResult, countUpIndex, inputLength);
 		int numberOfBlackElementDirectlyAfterPosition = getNumberOfBlackElementDirectlyAfterPosition(
 				statusArrayResult, countUpIndex + inputLength - 1);
@@ -262,7 +286,7 @@ public class PuzzleSolverUtil {
 		return countUpIndex;
 	}
 
-	private static int checkBlackValuesCountDown(PuzzleFieldStatus[] statusArrayResult, int countDownIndex, int inputLength) {
+	private int checkBlackValuesCountDown(PuzzleFieldStatus[] statusArrayResult, int countDownIndex, int inputLength) {
 		Integer lastBlackValueInDirectRange = getLastBlackIndexInSection(statusArrayResult, countDownIndex, inputLength);
 		int numberOfBlackElementDirectlyBeforePosition = getNumberOfBlackElementDirectlyBeforePosition(
 				statusArrayResult, countDownIndex - (inputLength - 1));
@@ -274,14 +298,14 @@ public class PuzzleSolverUtil {
 					(countDownIndex - lastBlackValueInDirectRange) < numberOfBlackElementDirectlyBeforePosition) {
 				return countDownIndex - (inputLength + numberOfBlackElementDirectlyBeforePosition + 1);
 			} else {
-				return countDownIndex + numberOfBlackElementDirectlyBeforePosition;
+				return countDownIndex - numberOfBlackElementDirectlyBeforePosition;
 			}
 		}
 		return countDownIndex;
 	}
 
-	private static void goThroughInputValuesFromLowestToHighest(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
-		// go through the input values from lowest to highest
+	private void goThroughInputValuesFromLowestToHighest(InputValueSolverInfo[] inputValueSolverInfoArray,
+														 PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		int countUp = 0;
 		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
 			if (inputValueSolverInfo.isSolved()) {
@@ -297,24 +321,21 @@ public class PuzzleSolverUtil {
 					countUpCorrection = checkBlackValuesCountUp(statusArrayResult, countUpCorrection, inputLength);
 				} while (countUpCorrection > countUpStart);
 
-				// register solved items to InputValueSolverInfo
 				inputValueSolverInfo.setIndexMin(countUpStart);
-				for (int k = countUpStart; k < countUpStart + inputLength; k++) {
-					if (statusArrayResult[k].isSolved() && VALUE.BLACK.equals(statusArrayResult[k].getFieldValue())) {
-						inputValueSolverInfo.addSolvedValue(k);
-					}
-				}
+				// register solved items to InputValueSolverInfo
+//				for (int k = countUpStart; k < countUpStart + inputLength; k++) {
+//					if (statusArrayResult[k].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArrayResult[k].getFieldValue())) {
+//						inputValueSolverInfo.addSolvedValue(k);
+//					}
+//				}
 
 				//update countUp value
 				countUp = countUpStart + inputLength + 1;
 			}
 		}
-		// end count up
-
 	}
 
-	private static void goThroughInputValuesFromHighestToLowest(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
-		// go through the input values from highest to lowest
+	private void goThroughInputValuesFromHighestToLowest(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		int countDown = statusArrayResult.length - 1;
 		for (int m = inputValueSolverInfoArray.length - 1; m >= 0; m--) {
 			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
@@ -331,56 +352,16 @@ public class PuzzleSolverUtil {
 					countDownCorrection = checkBlackValuesCountDown(statusArrayResult, countDownCorrection, inputLength);
 				} while (countDownCorrection < countDownStart);
 
-
-				// register solved items to InputValueSolverInfo
 				inputValueSolverInfo.setIndexMax(countDownStart);
-				for (int k = countDownStart; k > countDownStart - inputLength; k--) {
-					if (statusArrayResult[k].isSolved() && VALUE.BLACK.equals(statusArrayResult[k].getFieldValue())) {
-						inputValueSolverInfo.addSolvedValue(k);
-					}
-				}
+				// register solved items to InputValueSolverInfo
+//				for (int k = countDownStart; k > countDownStart - inputLength; k--) {
+//					if (statusArrayResult[k].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArrayResult[k].getFieldValue())) {
+//						inputValueSolverInfo.addSolvedValue(k);
+//					}
+//				}
 
 				//update countDown value
 				countDown = countDownStart - inputLength - 1;
-			}
-		}
-	}
-
-	private static void checkNoneValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException  {
-		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
-			InputValueSolverInfo currentSolverInfo = inputValueSolverInfoArray[z];
-			InputValueSolverInfo solverInfoBefore = null;
-			if (z - 1 >= 0) {
-				solverInfoBefore = inputValueSolverInfoArray[z - 1];
-			}
-			// check NONE values between this and previous
-			if (solverInfoBefore != null) {
-				if (solverInfoBefore.getIndexMax() + 1 < currentSolverInfo.getIndexMin()) {
-					for (int p = solverInfoBefore.getIndexMax() + 1; p < currentSolverInfo.getIndexMin(); p++) {
-						if (!statusArrayResult[p].isSolved()) {
-							statusArrayResult[p].setFieldValue(VALUE.NONE);
-						} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
-							throw new PuzzleSolverException("Conflict in status of a cell");
-						}
-					}
-				}
-			} else if (currentSolverInfo.getIndexMin() > 0) {
-				for (int p = 0; p < currentSolverInfo.getIndexMin(); p++) {
-					if (!statusArrayResult[p].isSolved()) {
-						statusArrayResult[p].setFieldValue(VALUE.NONE);
-					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
-						throw new PuzzleSolverException("Conflict in status of a cell");
-					}
-				}
-			}
-			if (z == inputValueSolverInfoArray.length -1 && currentSolverInfo.getIndexMax() + 1 < statusArrayResult.length) {
-				for (int p = currentSolverInfo.getIndexMax() + 1; p < statusArrayResult.length; p++) {
-					if (!statusArrayResult[p].isSolved()) {
-						statusArrayResult[p].setFieldValue(VALUE.NONE);
-					} else if (!VALUE.NONE.equals(statusArrayResult[p].getFieldValue())) {
-						throw new PuzzleSolverException("Conflict in status of a cell");
-					}
-				}
 			}
 		}
 	}

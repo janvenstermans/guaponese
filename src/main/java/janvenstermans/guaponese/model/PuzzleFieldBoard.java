@@ -1,7 +1,5 @@
 package janvenstermans.guaponese.model;
 
-import janvenstermans.guaponese.solver.PuzzleSolverUtil;
-
 /**
  * Class containing the status of each field of the rectangular board.
  *
@@ -31,7 +29,7 @@ public class PuzzleFieldBoard
 		return fieldStatusArray;
 	}
 
-	public void setFieldStatusAndValue(int columnIndex, int rowIndex, PuzzleSolverUtil.VALUE value) {
+	public void setFieldStatusAndValue(int columnIndex, int rowIndex, PuzzleFieldStatusValue value) {
 		fieldStatusArray[columnIndex][rowIndex].setFieldValue(value);
 	}
 

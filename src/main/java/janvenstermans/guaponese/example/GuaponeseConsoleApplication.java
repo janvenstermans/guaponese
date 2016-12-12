@@ -4,11 +4,7 @@ import janvenstermans.guaponese.example.extra.PuzzleInputSampleB;
 import janvenstermans.guaponese.model.PuzzleInput;
 import janvenstermans.guaponese.model.PuzzleFieldBoard;
 import janvenstermans.guaponese.model.PuzzleUtil;
-import janvenstermans.guaponese.solver.GuaponesePuzzleSolutionTimeline;
-import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStatusStatistics;
-import janvenstermans.guaponese.solver.GuaponesePuzzleSolveStepMethod;
-import janvenstermans.guaponese.solver.PuzzleSolverException;
-import janvenstermans.guaponese.solver.PuzzleSolverUtil;
+import janvenstermans.guaponese.solver.*;
 
 import java.util.Scanner;
 
@@ -24,6 +20,8 @@ public class GuaponeseConsoleApplication
 	private PuzzleInput puzzleInput;
 	private String tab = "  ";
 	private Scanner keyboard = new Scanner(System.in);
+
+	private PuzzleSolverService puzzleSolverService = new PuzzleSolverServiceImpl();
 
 	private GuaponesePuzzleSolutionTimeline timeline = new GuaponesePuzzleSolutionTimeline();
 
@@ -45,7 +43,7 @@ public class GuaponeseConsoleApplication
 				PuzzleFieldBoard puzzleStatus = PuzzleFieldBoard.createPuzzleFieldBoard(puzzleInput);
 				while (!stopSolving) {
 					// solve puzzle using a method
-					PuzzleSolverUtil.checkAllLinesCount(puzzleStatus, puzzleInput);
+					puzzleSolverService.checkAllLinesCount(puzzleStatus, puzzleInput);
 					GuaponesePuzzleSolveStatusStatistics currentPuzzleStatistics =
 							PuzzleUtil.getStatistics(puzzleInput, puzzleStatus);
 					boolean progression = timeline.addNextStep(GuaponesePuzzleSolveStepMethod.LINE, currentPuzzleStatistics);
