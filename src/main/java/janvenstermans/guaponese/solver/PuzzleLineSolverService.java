@@ -10,7 +10,6 @@ import janvenstermans.guaponese.model.PuzzleFieldStatus;
  */
 public interface PuzzleLineSolverService {
 
-	void solvePuzzleLine(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray)
+	void solvePuzzleLine(PuzzleLineInfo puzzleLineInfo)
 			throws PuzzleSolverException;
-
 }

@@ -262,6 +262,7 @@ public class PuzzleLineSolverServiceTest {
 		for (int j = 3 ; j <= 5; j++) {
 			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.NONE);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, inputArrayExpected, statusArrayExpected);
 	}
@@ -282,6 +283,7 @@ public class PuzzleLineSolverServiceTest {
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
+		statusArrayExpected[3].setFieldValue(PuzzleFieldStatusValue.NONE);
 		for (int j = 4 ; j <= 6; j++) {
 			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
@@ -308,14 +310,14 @@ public class PuzzleLineSolverServiceTest {
 		setValuesIndexMinMax(inputArrayExpected[1], 7, 8);
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
-		statusArrayExpected[0].setFieldValue(PuzzleFieldStatusValue.BLACK);
-		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[0].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.NONE);
 		statusArrayExpected[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
-		statusArrayExpected[5].setFieldValue(PuzzleFieldStatusValue.BLACK);
-		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[5].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[6].setFieldValue(PuzzleFieldStatusValue.NONE);
 		statusArrayExpected[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayExpected[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
-		statusArrayExpected[9].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[9].setFieldValue(PuzzleFieldStatusValue.NONE);
 
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, inputArrayExpected, statusArrayExpected);
 	}
@@ -478,7 +480,10 @@ public class PuzzleLineSolverServiceTest {
 									   PuzzleFieldStatus[] statusArrayExpected) throws PuzzleSolverException {
 		printStatusRowWithLabel("Input", inputArrayInput, statusArrayInput);
 
-		puzzleSolverRowService.solvePuzzleLine(inputArrayInput, statusArrayInput);
+		PuzzleLineInfo puzzleLineInfo = new PuzzleLineInfo();
+		puzzleLineInfo.setInputArray(inputArrayInput);
+		puzzleLineInfo.setStatusArray(statusArrayInput);
+		puzzleSolverRowService.solvePuzzleLine(puzzleLineInfo);
 
 		printStatusRowWithLabel("Expected", inputArrayInput, statusArrayExpected);
 		printMinMaxUnderRow(inputArrayExpected, statusArrayExpected);
