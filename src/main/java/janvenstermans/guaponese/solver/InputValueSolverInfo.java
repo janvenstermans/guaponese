@@ -1,5 +1,7 @@
 package janvenstermans.guaponese.solver;
 
+import janvenstermans.guaponese.model.PuzzleFieldStatusValue;
+
 /**
  * Information linked to an input value during solving the puzzle.
  *
@@ -9,6 +11,7 @@ package janvenstermans.guaponese.solver;
 public class InputValueSolverInfo {
 
 	private final int inputValue;
+	private final PuzzleFieldStatusValue statusValue;
 
 	private Integer indexMin, indexMax;
 
@@ -17,9 +20,11 @@ public class InputValueSolverInfo {
 	/**
 	 * Default constructor, with the input inputValue.
 	 * @param inputValue
+	 * @param statusValue
 	 */
-	public InputValueSolverInfo(int inputValue) {
+	public InputValueSolverInfo(int inputValue, PuzzleFieldStatusValue statusValue) {
 		this.inputValue = inputValue;
+		this.statusValue = statusValue;
 	}
 
 	/* setter methods */
@@ -63,6 +68,10 @@ public class InputValueSolverInfo {
 		return inputValue;
 	}
 
+	public PuzzleFieldStatusValue getStatusValue() {
+		return statusValue;
+	}
+
 	public Integer getIndexMax() {
 		return indexMax;
 	}
@@ -84,7 +93,7 @@ public class InputValueSolverInfo {
 	 *
 	 * @return copy
 	 */
-	public InputValueSolverRange getSolvedRangeCopy() {
+	public InputValueSolverRange getFullSolvedRangeCopy() {
 		if (hasSolvedRange()) {
 			return new InputValueSolverRange(solvedRange.getSolvedMin(), solvedRange.getSolvedMax());
 		}

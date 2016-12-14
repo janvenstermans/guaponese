@@ -12,28 +12,28 @@ import janvenstermans.guaponese.model.PuzzleInput;
  */
 public class PuzzleSolverServiceImpl implements PuzzleSolverService {
 
-	private PuzzleRowSolverService puzzleRowSolverService = new PuzzleRowSolverServiceImpl();
+	private PuzzleLineSolverService puzzleLineSolverService = new PuzzleLineSolverServiceImpl();
 
 	@Override
 	public void checkAllLinesCount(PuzzleFieldBoard puzzleStatus, PuzzleInput puzzleInput) throws PuzzleSolverException {
 		// first x, than y
 		for (int column = 0; column < puzzleInput.getDimensionX(); column++) {
-			PuzzleFieldStatus[] arrayResult = puzzleRowSolverService.checkCountOfArray(puzzleInput.getSolverInfoXOfColumn(column),
-					puzzleStatus.getStatusArrayOfColumn(column));
-			for (int i = 0 ; i < arrayResult.length ; i++) {
-				if (arrayResult[i].isSolved()) {
-					puzzleStatus.setFieldStatusAndValue(column, i, arrayResult[i].getFieldValue());
+			PuzzleFieldStatus[] columnStatusArray = puzzleStatus.getStatusArrayOfColumn(column);
+			puzzleLineSolverService.solvePuzzleLine(puzzleInput.getSolverInfoXOfColumn(column), columnStatusArray);
+			/*for (int i = 0 ; i < columnStatusArray.length ; i++) {
+				if (columnStatusArray[i].isSolved()) {
+					puzzleStatus.setFieldStatusAndValue(column, i, columnStatusArray[i].getFieldValue());
 				}
-			}
+			}*/
 		}
 		for (int row = 0; row < puzzleInput.getDimensionY(); row++) {
-			PuzzleFieldStatus[] arrayResult = puzzleRowSolverService.checkCountOfArray(puzzleInput.getSolverInfoYOfRow(row),
-					puzzleStatus.getStatusArrayOfRow(row));
-			for (int i = 0 ; i < arrayResult.length ; i++) {
-				if (arrayResult[i].isSolved()) {
-					puzzleStatus.setFieldStatusAndValue(i, row, arrayResult[i].getFieldValue());
+			PuzzleFieldStatus[] rowStatusArray = puzzleStatus.getStatusArrayOfRow(row);
+			puzzleLineSolverService.solvePuzzleLine(puzzleInput.getSolverInfoYOfRow(row), puzzleStatus.getStatusArrayOfRow(row));
+			/*for (int i = 0 ; i < rowStatusArray.length ; i++) {
+				if (rowStatusArray[i].isSolved()) {
+					puzzleStatus.setFieldStatusAndValue(i, row, rowStatusArray[i].getFieldValue());
 				}
-			}
+			}*/
 		}
 
 	}

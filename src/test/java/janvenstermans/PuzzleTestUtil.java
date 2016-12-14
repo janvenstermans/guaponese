@@ -1,6 +1,7 @@
 package janvenstermans;
 
 import janvenstermans.guaponese.model.PuzzleFieldStatus;
+import janvenstermans.guaponese.model.PuzzleFieldStatusValue;
 import janvenstermans.guaponese.model.PuzzleUtil;
 import janvenstermans.guaponese.solver.InputValueSolverInfo;
 
@@ -26,7 +27,7 @@ public class PuzzleTestUtil {
 		int count = integers.length;
 		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[count];
 		for (int i = 0; i < count; i++) {
-			inputValueSolverInfoArray[i] = new InputValueSolverInfo(integers[i]);
+			inputValueSolverInfoArray[i] = new InputValueSolverInfo(integers[i], PuzzleFieldStatusValue.BLACK);
 		}
 		return inputValueSolverInfoArray;
 	}

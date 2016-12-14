@@ -3,71 +3,50 @@ package janvenstermans.guaponese.solver;
 import janvenstermans.guaponese.model.PuzzleFieldStatus;
 import janvenstermans.guaponese.model.PuzzleFieldStatusValue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Contains solution tactics.
  *
  * @author Jan Venstermans
  *
  */
-public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
+public class PuzzleLineSolverServiceImpl implements PuzzleLineSolverService {
 
 	@Override
-	public PuzzleFieldStatus[] checkCountOfArray(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray)
+	public void solvePuzzleLine(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray)
 			throws PuzzleSolverException {
-		// start with existing values
-		if (isAllSolved(statusArray)) {
-			return statusArray;
+		PuzzleLineSummary puzzleLineSummary = getSummary(inputArray, statusArray);
+		if (puzzleLineSummary.isAllSolved()) {
+			return;
 		}
-		int sum = sumOfInput(inputArray);
-		if (sum > 0) {
-			int solvedSum = sumOfSolved(statusArray);
-			// TODO: check for all not-NONE values
-			if (solvedSum == sum) {
-				for (int i = 0; i < statusArray.length; i++) {
-					if (!statusArray[i].isSolved()) {
-						statusArray[i].setFieldValue(PuzzleFieldStatusValue.NONE);
-					}
-				}
-			} else {
-				checkForBlackValues(inputArray, statusArray);
-			}
-		} else {
-			// solve all: all are null value
-			for (PuzzleFieldStatus fieldStatus : statusArray) {
-				fieldStatus.setFieldValue(PuzzleFieldStatusValue.NONE);
-			}
+		int amountOfDifferentInputStatusValue = puzzleLineSummary.amountOfDifferentInputStatusValue();
+		if (amountOfDifferentInputStatusValue == 0) {
+			setAllUnsolvedToSameValue(statusArray, PuzzleFieldStatusValue.NONE);
+			return;
 		}
-		return statusArray;
+		if (amountOfDifferentInputStatusValue > 1) {
+			throw new PuzzleSolverException("Cannot solve yet for different colors of input.");
+		}
+		// we expect the value to be PuzzleFieldStatusValue.BLACK
+		if (puzzleLineSummary.getInputSum(PuzzleFieldStatusValue.BLACK) ==
+				puzzleLineSummary.getSolvedSum(PuzzleFieldStatusValue.BLACK)) {
+			setAllUnsolvedToSameValue(statusArray, PuzzleFieldStatusValue.NONE);
+			return;
+		}
+
+		goThroughInputValues(inputArray, statusArray);
+		checkNoneValues(inputArray, statusArray);
+
+		checkSolvedRange(inputArray, statusArray);
 	}
 
 	//---------------------------------------
-	// public methods
+	// private methods
 	//---------------------------------------
 
-	/**
-	 * Search for BLACK values.
-	 *
-	 * @param inputValueSolverInfoArray
-	 * @param statusArrayResult
-	 * @throws Exception
-	 */
-	public void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
-											PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
-		goThroughInputValues(inputValueSolverInfoArray, statusArrayResult);
-		checkNoneValues(inputValueSolverInfoArray, statusArrayResult);
-
-		//copy solved values from InputValueSolverInfo[] to solution:
-		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
-			InputValueSolverRange inputValueSolverRange = inputValueSolverInfo.getSolvedRangeCopy();
-			if (inputValueSolverRange != null) {
-				for (int i = inputValueSolverRange.getSolvedMin() ; i <= inputValueSolverRange.getSolvedMax() ; i++) {
-					statusArrayResult[i].setFieldValue(PuzzleFieldStatusValue.BLACK);
-				}
-			}
-		}
-	}
-
-	public void goThroughInputValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+	private void goThroughInputValues(InputValueSolverInfo[] inputValueSolverInfoArray,
 																PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		checkInputValuesMinValues(inputValueSolverInfoArray, statusArrayResult);
 		checkInputValuesMaxValues(inputValueSolverInfoArray, statusArrayResult);
@@ -76,7 +55,7 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 		goThroughInputValuesFromHighestToLowestCheckBlackValues(inputValueSolverInfoArray, statusArrayResult);
 	}
 
-	public void checkNoneValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException  {
+	private void checkNoneValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException  {
 		for (int z = 0; z < inputValueSolverInfoArray.length; z++) {
 			InputValueSolverInfo currentSolverInfo = inputValueSolverInfoArray[z];
 			InputValueSolverInfo solverInfoBefore = null;
@@ -115,26 +94,37 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 		}
 	}
 
-	//-------------------------------------------
-	// private methods
-	//-------------------------------------------
-
-	private int sumOfInput(InputValueSolverInfo[] inputArray) {
-		int sum = 0;
-		for (InputValueSolverInfo value : inputArray) {
-			sum += value.getInputValue();
-		}
-		return sum;
-	}
-
-	private int sumOfSolved(PuzzleFieldStatus[] statusArray) {
-		int sum = 0;
-		for (int i = 0 ; i < statusArray.length ; i++) {
-			if (statusArray[i].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArray[i].getFieldValue())) {
-				sum++;
+	private void checkSolvedRange(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray) {
+		//copy solved values from InputValueSolverInfo[] to solution:
+		for (InputValueSolverInfo inputValueSolverInfo : inputArray) {
+			InputValueSolverRange inputValueSolverRange = inputValueSolverInfo.getFullSolvedRangeCopy();
+			if (inputValueSolverRange != null) {
+				for (int i = inputValueSolverRange.getSolvedMin() ; i <= inputValueSolverRange.getSolvedMax() ; i++) {
+					statusArray[i].setFieldValue(PuzzleFieldStatusValue.BLACK);
+				}
 			}
 		}
-		return sum;
+	}
+
+	private void setAllUnsolvedToSameValue(PuzzleFieldStatus[] statusArray, PuzzleFieldStatusValue value) {
+		// solve all: all are null value
+		for (PuzzleFieldStatus fieldStatus : statusArray) {
+			if (!fieldStatus.isSolved()) {
+				fieldStatus.setFieldValue(value);
+			}
+		}
+	}
+
+	private PuzzleLineSummary getSummary(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray) {
+		PuzzleLineSummary puzzleLineSummary = new PuzzleLineSummary();
+		puzzleLineSummary.setAllSolved(isAllSolved(statusArray));
+		for (Map.Entry<PuzzleFieldStatusValue, Integer> entry : getSolvedSumPerStatusValueMap(statusArray).entrySet()) {
+			puzzleLineSummary.setSolvedSumPerStatusValue(entry.getKey(), entry.getValue());
+		}
+		for (Map.Entry<PuzzleFieldStatusValue, Integer> entry : getInputSumStatusValueIntegerMap(inputArray).entrySet()) {
+			puzzleLineSummary.setInputSumPerStatusValue(entry.getKey(), entry.getValue());
+		}
+		return puzzleLineSummary;
 	}
 
 	private boolean isAllSolved(PuzzleFieldStatus[] statusArray) {
@@ -144,6 +134,34 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 			}
 		}
 		return true;
+	}
+
+	private Map<PuzzleFieldStatusValue, Integer> getSolvedSumPerStatusValueMap(PuzzleFieldStatus[] statusArray) {
+		Map<PuzzleFieldStatusValue, Integer> solvedSumPerStatusValueMap = new HashMap<>();
+		for (PuzzleFieldStatus status : statusArray) {
+			PuzzleFieldStatusValue statusValue = status.getFieldValue();
+			if (statusValue != null) {
+				if (solvedSumPerStatusValueMap.containsKey(statusValue)) {
+					solvedSumPerStatusValueMap.put(statusValue, 1  + solvedSumPerStatusValueMap.get(statusValue));
+				} else {
+					solvedSumPerStatusValueMap.put(statusValue, 1);
+				}
+			}
+		}
+		return solvedSumPerStatusValueMap;
+	}
+
+	private Map<PuzzleFieldStatusValue, Integer> getInputSumStatusValueIntegerMap(InputValueSolverInfo[] inputArray) {
+		// this should only be done once
+		Map<PuzzleFieldStatusValue, Integer> inputSumStatusValueIntegerMap = new HashMap<>();
+		for (InputValueSolverInfo value : inputArray) {
+			if (inputSumStatusValueIntegerMap.containsKey(value.getStatusValue())) {
+				inputSumStatusValueIntegerMap.put(value.getStatusValue(), value.getInputValue() + inputSumStatusValueIntegerMap.get(value.getStatusValue()));
+			} else {
+				inputSumStatusValueIntegerMap.put(value.getStatusValue(), value.getInputValue());
+			}
+		}
+		return inputSumStatusValueIntegerMap;
 	}
 
 	/**
@@ -382,6 +400,53 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 					}
 				}
 			}
+		}
+	}
+
+	//-------------------------------------------
+	// private classes
+	//-------------------------------------------
+
+	private class PuzzleLineSummary {
+		private boolean allSolved;
+
+		private Map<PuzzleFieldStatusValue, Integer> inputSumPerStatusValueMap = new HashMap<>();
+		private Map<PuzzleFieldStatusValue, Integer> solvedSumPerStatusValueMap = new HashMap<>();
+
+		public boolean isAllSolved() {
+			return allSolved;
+		}
+
+		public void setAllSolved(boolean allSolved) {
+			this.allSolved = allSolved;
+		}
+
+		public void setInputSumPerStatusValue(PuzzleFieldStatusValue statusValue, int value) {
+			if (value > 0) {
+				inputSumPerStatusValueMap.put(statusValue, value);
+			} else {
+				inputSumPerStatusValueMap.remove(statusValue);
+			}
+		}
+
+		public void setSolvedSumPerStatusValue(PuzzleFieldStatusValue statusValue, int value) {
+			if (value > 0) {
+				solvedSumPerStatusValueMap.put(statusValue, value);
+			} else {
+				solvedSumPerStatusValueMap.remove(statusValue);
+			}
+		}
+
+		public Integer getInputSum(PuzzleFieldStatusValue statusValue) {
+			return inputSumPerStatusValueMap.get(statusValue);
+		}
+
+		public Integer getSolvedSum(PuzzleFieldStatusValue statusValue) {
+			return solvedSumPerStatusValueMap.get(statusValue);
+		}
+
+		public int amountOfDifferentInputStatusValue() {
+			return inputSumPerStatusValueMap.size();
 		}
 	}
 }
