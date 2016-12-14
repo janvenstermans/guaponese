@@ -113,7 +113,7 @@ public final class PuzzleUtil {
 		String[] result = new String[rows];
 		for (int row = 0 ; row < rows; row++) {
 			PuzzleFieldStatus[] statusses = puzzleStatus.getStatusArrayOfRow(row);
-			result[row] = formatStatusRow(statusses);
+			result[row] = formatFieldStatusLine(statusses);
 		}
 		return result;
 	}
@@ -185,15 +185,37 @@ public final class PuzzleUtil {
 	   	return line;
 	}
 
-	public static String formatStatusRow(PuzzleFieldStatus[] status) {
-		String line = "";
+	public static String formatFieldStatusLine(PuzzleFieldStatus[] status) {
+		StringBuilder stringBuilder = new StringBuilder();
 		if (status.length > 0) {
-			line += String.format("%2s", status[0].isSolved() ? toString(status[0].getFieldValue()) : "");
+			stringBuilder.append(String.format("%2s", formatFieldStatus(status[0])));
 			for (int i = 1 ; i < status.length ; i++) {
-				line += String.format("%3s", status[i].isSolved() ? toString(status[i].getFieldValue()) : "");
+				stringBuilder.append(String.format("%3s", formatFieldStatus(status[i])));
 			}
 		}
-		return line;
+		return stringBuilder.toString();
+	}
+
+	public static String formatMinMaxUnderLine(InputValueSolverInfo inputValueSolverInfo, PuzzleFieldStatus[] status) {
+		StringBuilder stringBuilder = new StringBuilder();
+		if (status.length > 0) {
+			stringBuilder.append(String.format("%2s", formatMinMax(inputValueSolverInfo, 0)));
+			for (int i = 1 ; i < status.length ; i++) {
+				stringBuilder.append(String.format("%3s", formatMinMax(inputValueSolverInfo, i)));
+			}
+		}
+		return stringBuilder.toString();
+	}
+
+	private static String formatFieldStatus(PuzzleFieldStatus status) {
+		return status.isSolved() ? toString(status.getFieldValue()) : "";
+	}
+
+	private static String formatMinMax(InputValueSolverInfo inputValueSolverInfo, int lineIndex) {
+		if (lineIndex < inputValueSolverInfo.getIndexMin() || lineIndex > inputValueSolverInfo.getIndexMax()) {
+			return "";
+		}
+		return "+";
 	}
 
 	private static String toString(PuzzleFieldStatusValue value) {

@@ -10,9 +10,17 @@ import janvenstermans.guaponese.solver.InputValueSolverInfo;
  */
 public class PuzzleTestUtil {
 
-	public static void printArrayAsRow(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray) {
+	public static void printFieldStatusLine(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray) {
 		System.out.println(PuzzleUtil.formatInputRow(inputArray) +
-				" | " + PuzzleUtil.formatStatusRow(statusArray) + " |");
+				" | " + PuzzleUtil.formatFieldStatusLine(statusArray) + " |");
+	}
+
+	public static void printMinMaxUnderLine(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] statusArray, int index) {
+		InputValueSolverInfo inputValueSolverInfo = inputArray[index];
+		String inputRow = PuzzleUtil.formatInputRow(inputArray);
+		String formatLength = "%" + inputRow.length() + "d";
+		System.out.println(String.format(formatLength, inputValueSolverInfo.getInputValue()) +
+				" | " + PuzzleUtil.formatMinMaxUnderLine(inputValueSolverInfo, statusArray) + " |");
 	}
 
 	public static PuzzleFieldStatus[] createEmptyColumnPuzzleFieldStatusArray(int dimension) {

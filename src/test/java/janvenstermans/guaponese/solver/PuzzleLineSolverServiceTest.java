@@ -476,12 +476,14 @@ public class PuzzleLineSolverServiceTest {
 									   PuzzleFieldStatus[] statusArrayInput,
 									   InputValueSolverInfo[] inputArrayExpected,
 									   PuzzleFieldStatus[] statusArrayExpected) throws PuzzleSolverException {
-		printRowWithLabel("Input", inputArrayInput, statusArrayInput);
+		printStatusRowWithLabel("Input", inputArrayInput, statusArrayInput);
 
 		puzzleSolverRowService.solvePuzzleLine(inputArrayInput, statusArrayInput);
 
-		printRowWithLabel("Result", inputArrayInput, statusArrayInput);
-		printRowWithLabel("Expected", inputArrayInput, statusArrayExpected);
+		printStatusRowWithLabel("Expected", inputArrayInput, statusArrayExpected);
+		printMinMaxUnderRow(inputArrayExpected, statusArrayExpected);
+		printStatusRowWithLabel("Result", inputArrayInput, statusArrayInput);
+		printMinMaxUnderRow(inputArrayInput, statusArrayInput);
 
 		assertEqualsInputValueSolverInfoArray(inputArrayExpected, inputArrayInput);
 		assertStatusArray(statusArrayExpected, statusArrayInput);
@@ -537,10 +539,16 @@ public class PuzzleLineSolverServiceTest {
 		}
 	}
 
-	private void printRowWithLabel(String label, InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] arrayResult) {
+	private void printStatusRowWithLabel(String label, InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] arrayResult) {
 		if (label != null) {
 			System.out.println(label);
 		}
-		PuzzleTestUtil.printArrayAsRow(inputArray, arrayResult);
+		PuzzleTestUtil.printFieldStatusLine(inputArray, arrayResult);
+	}
+
+	private void printMinMaxUnderRow(InputValueSolverInfo[] inputArray, PuzzleFieldStatus[] arrayResult) {
+		for (int i = 0; i < inputArray.length; i++) {
+			PuzzleTestUtil.printMinMaxUnderLine(inputArray, arrayResult, i);
+		}
 	}
 }
