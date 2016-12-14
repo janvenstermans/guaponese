@@ -465,6 +465,37 @@ public class PuzzleLineSolverServiceTest {
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, inputArrayExpected, statusArrayExpected);
 	}
 
+
+	/**
+	 * Problem was throwing exception throw new PuzzleSolverException("Too many solved values for inputValue");
+	 * @throws Exception
+	 */
+	@Test
+	public void testSolvePuzzleLineSpecialAllValuesSolved() throws Exception {
+		int dimensionInput = 10;
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 2);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		// solved values
+		statusArrayInput[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		// create expected values
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 2);
+		// solved values
+		setValuesIndexMinMax(inputArrayExpected[0], 3, 3);
+		setValuesIndexMinMax(inputArrayExpected[1], 7, 8);
+		// create expected values statusArrayExpected
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		for (int j = 0 ; j <= 9; j++) {
+			statusArrayExpected[j].setFieldValue(PuzzleFieldStatusValue.NONE);
+		}
+		statusArrayExpected[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
+
+		executeCallAndAnalyse(inputArrayInput, statusArrayInput, inputArrayExpected, statusArrayExpected);
+	}
+
 	//--------------------------------------------------------
 	// private method
 	//--------------------------------------------------------

@@ -245,10 +245,14 @@ public class PuzzleLineSolverServiceImpl implements PuzzleLineSolverService {
 
 	private Integer getFirstBlackIndexInSection(PuzzleFieldStatus[] statusArray,
 												int startIndex, int length) {
-		for (int i = startIndex; i < startIndex + length; i++) {
-			if (statusArray[i].isSolved() && statusArray[i].equals(PuzzleFieldStatusValue.BLACK)) {
-				return i;
+		try {
+			for (int i = startIndex; i < startIndex + length; i++) {
+				if (statusArray[i].isSolved() && statusArray[i].equals(PuzzleFieldStatusValue.BLACK)) {
+					return i;
+				}
 			}
+		} catch (ArrayIndexOutOfBoundsException aiob) {
+			int i = 5;
 		}
 		return null;
 	}
@@ -287,7 +291,7 @@ public class PuzzleLineSolverServiceImpl implements PuzzleLineSolverService {
 		while (firstSolvedNoneElement != null) {
 			countDownIndex = firstSolvedNoneElement - 1;
 			firstSolvedNoneElement =
-					getLastSolvedNoneElement(statusArrayResult, countDownIndex, inputLength);
+					getFirstSolvedNoneElement(statusArrayResult, countDownIndex, inputLength);
 		}
 		return countDownIndex;
 	}
