@@ -53,8 +53,7 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 	 */
 	public void checkForBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
 											PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
-		goThroughInputValuesFromLowestToHighest(inputValueSolverInfoArray, statusArrayResult);
-		goThroughInputValuesFromHighestToLowest(inputValueSolverInfoArray, statusArrayResult);
+		goThroughInputValues(inputValueSolverInfoArray, statusArrayResult);
 		checkNoneValues(inputValueSolverInfoArray, statusArrayResult);
 
 		//copy solved values from InputValueSolverInfo[] to solution:
@@ -70,8 +69,11 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 
 	public void goThroughInputValues(InputValueSolverInfo[] inputValueSolverInfoArray,
 																PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
-		goThroughInputValuesFromLowestToHighest(inputValueSolverInfoArray, statusArrayResult);
-		goThroughInputValuesFromHighestToLowest(inputValueSolverInfoArray, statusArrayResult);
+		checkInputValuesMinValues(inputValueSolverInfoArray, statusArrayResult);
+		checkInputValuesMaxValues(inputValueSolverInfoArray, statusArrayResult);
+		// by now, each InputValueSolverInfo should have min and max value
+		goThroughInputValuesFromLowestToHighestCheckBlackValues(inputValueSolverInfoArray, statusArrayResult);
+		goThroughInputValuesFromHighestToLowestCheckBlackValues(inputValueSolverInfoArray, statusArrayResult);
 	}
 
 	public void checkNoneValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException  {
@@ -304,10 +306,11 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 		return countDownIndex;
 	}
 
-	private void goThroughInputValuesFromLowestToHighest(InputValueSolverInfo[] inputValueSolverInfoArray,
-														 PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+	private void checkInputValuesMinValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+										   PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		int countUp = 0;
-		for (InputValueSolverInfo inputValueSolverInfo : inputValueSolverInfoArray) {
+		for (int m = 0; m < inputValueSolverInfoArray.length; m++) {
+			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
 			if (inputValueSolverInfo.isSolved()) {
 				countUp = inputValueSolverInfo.getIndexMax() + 2;
 			} else {
@@ -322,20 +325,13 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 				} while (countUpCorrection > countUpStart);
 
 				inputValueSolverInfo.setIndexMin(countUpStart);
-				// register solved items to InputValueSolverInfo
-//				for (int k = countUpStart; k < countUpStart + inputLength; k++) {
-//					if (statusArrayResult[k].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArrayResult[k].getFieldValue())) {
-//						inputValueSolverInfo.addSolvedValue(k);
-//					}
-//				}
-
 				//update countUp value
 				countUp = countUpStart + inputLength + 1;
 			}
 		}
 	}
 
-	private void goThroughInputValuesFromHighestToLowest(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+	private void checkInputValuesMaxValues(InputValueSolverInfo[] inputValueSolverInfoArray, PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
 		int countDown = statusArrayResult.length - 1;
 		for (int m = inputValueSolverInfoArray.length - 1; m >= 0; m--) {
 			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
@@ -353,15 +349,38 @@ public class PuzzleRowSolverServiceImpl implements PuzzleRowSolverService {
 				} while (countDownCorrection < countDownStart);
 
 				inputValueSolverInfo.setIndexMax(countDownStart);
-				// register solved items to InputValueSolverInfo
-//				for (int k = countDownStart; k > countDownStart - inputLength; k--) {
-//					if (statusArrayResult[k].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArrayResult[k].getFieldValue())) {
-//						inputValueSolverInfo.addSolvedValue(k);
-//					}
-//				}
-
 				//update countDown value
 				countDown = countDownStart - inputLength - 1;
+			}
+		}
+	}
+
+	private void goThroughInputValuesFromLowestToHighestCheckBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+																		 PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+		for (int m = 0; m < inputValueSolverInfoArray.length; m++) {
+			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
+			// under specific circumstances, register solved items to InputValueSolverInfo
+			if (m == 0 || inputValueSolverInfoArray[m - 1].getIndexMax() + 1 < inputValueSolverInfo.getIndexMin()) {
+				for (int k = inputValueSolverInfo.getIndexMin(); k < inputValueSolverInfo.getIndexMin() + inputValueSolverInfo.getInputValue(); k++) {
+					if (statusArrayResult[k].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArrayResult[k].getFieldValue())) {
+						inputValueSolverInfo.addSolvedValue(k);
+					}
+				}
+			}
+		}
+	}
+
+	private void goThroughInputValuesFromHighestToLowestCheckBlackValues(InputValueSolverInfo[] inputValueSolverInfoArray,
+																		 PuzzleFieldStatus[] statusArrayResult) throws PuzzleSolverException {
+		for (int m = inputValueSolverInfoArray.length - 1; m >= 0; m--) {
+			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[m];
+			// under specific circumstances, register solved items to InputValueSolverInfo
+			if (m == inputValueSolverInfoArray.length - 1 || inputValueSolverInfoArray[m + 1].getIndexMin() - 1 > inputValueSolverInfo.getIndexMax()) {
+				for (int k = inputValueSolverInfo.getIndexMax(); k > inputValueSolverInfo.getIndexMax() - inputValueSolverInfo.getInputValue(); k--) {
+					if (statusArrayResult[k].isSolved() && PuzzleFieldStatusValue.BLACK.equals(statusArrayResult[k].getFieldValue())) {
+						inputValueSolverInfo.addSolvedValue(k);
+					}
+				}
 			}
 		}
 	}
