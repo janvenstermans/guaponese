@@ -212,7 +212,10 @@ public final class PuzzleUtil {
 	}
 
 	private static String formatMinMax(InputValueSolverInfo inputValueSolverInfo, int lineIndex) {
-		if (lineIndex < inputValueSolverInfo.getIndexMin() || lineIndex > inputValueSolverInfo.getIndexMax()) {
+		if (lineIndex < inputValueSolverInfo.getIndexMin()) {
+			return "";
+		}
+		if (lineIndex > inputValueSolverInfo.getIndexMax()) {
 			return "";
 		}
 		return "+";

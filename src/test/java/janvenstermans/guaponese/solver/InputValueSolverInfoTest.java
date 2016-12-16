@@ -9,14 +9,10 @@ import org.junit.Test;
  */
 public class InputValueSolverInfoTest {
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorValues() throws Exception {
 		int inputValue = 10;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValue, PuzzleFieldStatusValue.BLACK);
-
-		Assert.assertFalse(inputValueSolverInfo.isSolved());
-		Assert.assertNull(inputValueSolverInfo.getIndexMin());
-		Assert.assertNull(inputValueSolverInfo.getIndexMax());
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValue, PuzzleFieldStatusValue.BLACK, 5, 3);
 	}
 
 	//--------------------------------------------------------
@@ -25,16 +21,18 @@ public class InputValueSolverInfoTest {
 
 	@Test
 	public void testAddSolvedValueForLessAmountOfInputIsUnsolved() throws Exception {
+		int indexMinInput = 0;
+		int indexMaxInput = 99;
 		int[] inputValueArray = { 1, 8, 4, 13};
 		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[inputValueArray.length];
 		for (int i = 0; i < inputValueArray.length ; i++) {
-			inputValueSolverInfoArray[i] = new InputValueSolverInfo(inputValueArray[i], PuzzleFieldStatusValue.BLACK);
+			inputValueSolverInfoArray[i] = new InputValueSolverInfo(inputValueArray[i], PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 		}
 		// add distinct values for the amount of each inputValue - 1
 		for (int i = 0; i < inputValueArray.length; i++) {
 			int inputValue = inputValueArray[i];
 			InputValueSolverInfo inputValueSolverInfo = inputValueSolverInfoArray[i];
-			for (int j = 0; j < inputValue - 1 ; j++) {
+			for (int j = 1; j < inputValue; j++) {
 				inputValueSolverInfo.addSolvedValue(j);
 			}
 		}
@@ -46,10 +44,12 @@ public class InputValueSolverInfoTest {
 
 	@Test
 	public void testAddSolvedValueForAmountOfInputIsSolved() throws Exception {
+		int indexMinInput = 0;
+		int indexMaxInput = 99;
 		int[] inputValueArray = { 1, 8, 4, 13};
 		InputValueSolverInfo[] inputValueSolverInfoArray = new InputValueSolverInfo[inputValueArray.length];
 		for (int i = 0; i < inputValueArray.length ; i++) {
-			inputValueSolverInfoArray[i] = new InputValueSolverInfo(inputValueArray[i], PuzzleFieldStatusValue.BLACK);
+			inputValueSolverInfoArray[i] = new InputValueSolverInfo(inputValueArray[i], PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 		}
 		// add distinct values for the amount of each inputValue
 		for (int i = 0; i < inputValueArray.length; i++) {
@@ -74,13 +74,13 @@ public class InputValueSolverInfoTest {
 		int inputValueArray = 2;
 		int indexMinFirst = 5;
 		int indexMinSecond = 3;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinFirst);
+		int indexMaxInput = 9;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinFirst, indexMaxInput);
 
 		inputValueSolverInfo.setIndexMin(indexMinSecond);
 
 		Assert.assertNotNull(inputValueSolverInfo.getIndexMin());
-		Assert.assertEquals(indexMinFirst, inputValueSolverInfo.getIndexMin().intValue());
+		Assert.assertEquals(indexMinFirst, inputValueSolverInfo.getIndexMin());
 	}
 
 	@Test
@@ -88,13 +88,13 @@ public class InputValueSolverInfoTest {
 		int inputValueArray = 2;
 		int indexMinFirst = 3;
 		int indexMinSecond = 5;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinFirst);
+		int indexMaxInput = 9;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinFirst, indexMaxInput);
 
 		inputValueSolverInfo.setIndexMin(indexMinSecond);
 
 		Assert.assertNotNull(inputValueSolverInfo.getIndexMin());
-		Assert.assertEquals(indexMinSecond, inputValueSolverInfo.getIndexMin().intValue());
+		Assert.assertEquals(indexMinSecond, inputValueSolverInfo.getIndexMin());
 	}
 
 	//--------------------------------------------------------
@@ -104,36 +104,37 @@ public class InputValueSolverInfoTest {
 	@Test
 	public void testSetIndexMaxWithHigherValueDoesNotChangeIndexMax() throws Exception {
 		int inputValueArray = 2;
+		int indexMinInput = 0;
 		int indexMaxFirst = 3;
 		int indexMaxSecond = 5;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMax(indexMaxFirst);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxFirst);
 
 		inputValueSolverInfo.setIndexMax(indexMaxSecond);
 
 		Assert.assertNotNull(inputValueSolverInfo.getIndexMax());
-		Assert.assertEquals(indexMaxFirst, inputValueSolverInfo.getIndexMax().intValue());
+		Assert.assertEquals(indexMaxFirst, inputValueSolverInfo.getIndexMax());
 	}
 
 	@Test
 	public void testSetIndexMaxWithLowerValueChangesIndexMax() throws Exception {
 		int inputValueArray = 2;
+		int indexMinInput = 0;
 		int indexMaxFirst = 5;
 		int indexMaxSecond = 3;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMax(indexMaxFirst);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxFirst);
 
 		inputValueSolverInfo.setIndexMax(indexMaxSecond);
 
 		Assert.assertNotNull(inputValueSolverInfo.getIndexMax());
-		Assert.assertEquals(indexMaxSecond, inputValueSolverInfo.getIndexMax().intValue());
+		Assert.assertEquals(indexMaxSecond, inputValueSolverInfo.getIndexMax());
 	}
 
 	@Test
 	public void testSetIndexMaxWithIndexJustRightToSolve() throws Exception {
 		int inputValueArray = 5;
 		int indexMinInitial = 2;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
+		int indexMaxInput = 9;
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInitial, indexMaxInput);
 		inputValueSolverInfo.setIndexMin(indexMinInitial);
 
 		inputValueSolverInfo.setIndexMax(indexMinInitial + inputValueArray - 1);
@@ -145,8 +146,7 @@ public class InputValueSolverInfoTest {
 	public void testSetIndexMinWithIndexJustRightToSolve() throws Exception {
 		int inputValueArray = 5;
 		int indexMaxInitial = 8;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMax(indexMaxInitial);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, 0, indexMaxInitial);
 
 		inputValueSolverInfo.setIndexMin(indexMaxInitial - inputValueArray + 1);
 
@@ -170,9 +170,7 @@ public class InputValueSolverInfoTest {
 		int indexMinInput = 2;
 		int indexMaxInput = 8;
 		int solvedValue = 6;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinInput);
-		inputValueSolverInfo.setIndexMax(indexMaxInput);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 
 		inputValueSolverInfo.addSolvedValue(solvedValue);
 
@@ -185,9 +183,7 @@ public class InputValueSolverInfoTest {
 		int indexMinInput = 2;
 		int indexMaxInput = 8;
 		int solvedValue = 9;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinInput);
-		inputValueSolverInfo.setIndexMax(indexMaxInput);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 
 		inputValueSolverInfo.addSolvedValue(solvedValue);
 	}
@@ -198,9 +194,7 @@ public class InputValueSolverInfoTest {
 		int indexMinInput = 2;
 		int indexMaxInput = 8;
 		int solvedValue = 1;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinInput);
-		inputValueSolverInfo.setIndexMax(indexMaxInput);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 
 		inputValueSolverInfo.addSolvedValue(solvedValue);
 	}
@@ -211,9 +205,7 @@ public class InputValueSolverInfoTest {
 		int indexMinInput = 2;
 		int indexMaxInput = 8;
 		int solvedValue = -1;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinInput);
-		inputValueSolverInfo.setIndexMax(indexMaxInput);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 
 		inputValueSolverInfo.addSolvedValue(solvedValue);
 	}
@@ -226,15 +218,13 @@ public class InputValueSolverInfoTest {
 		int solvedValue = 5;
 		int indexMinOutput = 4;
 		int indexMaxOutput = 6;
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinInput);
-		inputValueSolverInfo.setIndexMax(indexMaxInput);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 
 		inputValueSolverInfo.addSolvedValue(solvedValue);
 
 		Assert.assertFalse(inputValueSolverInfo.isSolved());
-		Assert.assertEquals(indexMinOutput, inputValueSolverInfo.getIndexMin().intValue());
-		Assert.assertEquals(indexMaxOutput, inputValueSolverInfo.getIndexMax().intValue());
+		Assert.assertEquals(indexMinOutput, inputValueSolverInfo.getIndexMin());
+		Assert.assertEquals(indexMaxOutput, inputValueSolverInfo.getIndexMax());
 	}
 
 	@Test
@@ -246,18 +236,20 @@ public class InputValueSolverInfoTest {
 		int indexMinOutput = indexMinInput;
 		int indexMaxOutput = 5;
 		InputValueSolverRange solvedRangeExpected = new InputValueSolverRange(3, 4);
-		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK);
-		inputValueSolverInfo.setIndexMin(indexMinInput);
-		inputValueSolverInfo.setIndexMax(indexMaxInput);
+		InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputValueArray, PuzzleFieldStatusValue.BLACK, indexMinInput, indexMaxInput);
 
 		inputValueSolverInfo.addSolvedValue(solvedValue);
 
 		Assert.assertFalse(inputValueSolverInfo.isSolved());
-		Assert.assertEquals(indexMinOutput, inputValueSolverInfo.getIndexMin().intValue());
-		Assert.assertEquals(indexMaxOutput, inputValueSolverInfo.getIndexMax().intValue());
+		Assert.assertEquals(indexMinOutput, inputValueSolverInfo.getIndexMin());
+		Assert.assertEquals(indexMaxOutput, inputValueSolverInfo.getIndexMax());
 		InputValueSolverRange solvedRangeResult = inputValueSolverInfo.getFullSolvedRangeCopy();
 		assertEquals(solvedRangeExpected, solvedRangeResult);
 	}
+
+	//-----------------------------------
+	// helper methods
+	//-----------------------------------
 
 	private void assertEquals(InputValueSolverRange expected, InputValueSolverRange actual) {
 		if (expected != null) {

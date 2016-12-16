@@ -6,6 +6,9 @@ import janvenstermans.guaponese.model.PuzzleFieldStatusValue;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Test {@link PuzzleLineSolverService#solvePuzzleLine(InputValueSolverInfo[], PuzzleFieldStatus[])}
  * result InputValueSolverInfo[].
@@ -21,10 +24,11 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineEmptyInput() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput();
+		List<Integer> inputArrayValueList = Arrays.asList();
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput();
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 0 ; j < dimensionInput; j++) {
@@ -37,11 +41,12 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineFullInput() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(10);
+		List<Integer> inputArrayValueList = Arrays.asList(10);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(10);
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 9);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0,9} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 0 ; j < dimensionInput; j++) {
@@ -58,11 +63,12 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineOneNumber() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(7);
+		List<Integer> inputArrayValueList = Arrays.asList(7);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(7);
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 9);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0,9} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 3 ; j < 7; j++) {
@@ -75,10 +81,11 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineNoNumber() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput();
+		List<Integer> inputArrayValueList = Arrays.asList();
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput();
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (PuzzleFieldStatus fieldStatus : statusArrayExpected) {
@@ -92,12 +99,12 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineTwoNumbers() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(5, 3);
+		List<Integer> inputArrayValueList = Arrays.asList(5, 3);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput); // nothing solved yet
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(5, 3);
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 5);
-		setValuesIndexMinMax(inputArrayExpected[1], 6, 9);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0,5},{6,9} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 1 ; j < 5; j++) {
@@ -117,13 +124,14 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineWithSolvedElements1() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(5);
+		List<Integer> inputArrayValueList = Arrays.asList(5);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[2].setFieldValue(PuzzleFieldStatusValue.NONE);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(5);
-		setValuesIndexMinMax(inputArrayExpected[0], 3, 9);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {3,9} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		statusArrayExpected[2].setFieldValue(PuzzleFieldStatusValue.NONE);
@@ -187,15 +195,13 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineWithAllSolvedElements3() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 2, 1, 3);
+		List<Integer> inputArrayValueList = Arrays.asList(1, 2, 1, 3);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 2, 1, 3);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// solved values
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 0);
-		setValuesIndexMinMax(inputArrayExpected[1], 2, 3);
-		setValuesIndexMinMax(inputArrayExpected[2], 5, 5);
-		setValuesIndexMinMax(inputArrayExpected[3], 7, 9);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0,0},{2,3},{5,5},{7,9} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
@@ -218,16 +224,16 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineToAddNoneValues1() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(2, 2);
+		List<Integer> inputArrayValueList = Arrays.asList(2, 2);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(2, 2);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// solved values
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 2);
-		setValuesIndexMinMax(inputArrayExpected[1], 6, 8);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0,2},{6,8} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
@@ -243,16 +249,16 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineToAddNoneValues2() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(3, 1);
+		List<Integer> inputArrayValueList = Arrays.asList(3, 1);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int j = 3 ; j <= 5; j++) {
 			statusArrayInput[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(3, 1);
-		setValuesIndexMinMax(inputArrayExpected[0], 3, 5);
-		setValuesIndexMinMax(inputArrayExpected[1], 7, 9);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {3, 5},{7, 9} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
@@ -270,16 +276,17 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineToAddNoneValues3() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 3);
+		List<Integer> inputArrayValueList = Arrays.asList(1, 3);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int j = 4 ; j <= 6; j++) {
 			statusArrayInput[j].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		}
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 3);
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 2);
-		setValuesIndexMinMax(inputArrayExpected[1], 4, 6);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		// solved values
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0, 2},{4, 6} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
@@ -298,16 +305,17 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineToBlackValues3() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(2, 2);
+		List<Integer> inputArrayValueList = Arrays.asList(2, 2);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(2, 2);
-		setValuesIndexMinMax(inputArrayExpected[0], 2, 4);
-		setValuesIndexMinMax(inputArrayExpected[1], 7, 8);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		// solved values
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {2, 4},{7, 8} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		statusArrayExpected[0].setFieldValue(PuzzleFieldStatusValue.NONE);
@@ -329,17 +337,17 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineAllCanBeSolvedAllBlacksAccounted() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 1, 1);
+		List<Integer> inputArrayValueList = Arrays.asList(1, 1, 1);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 1, 1);
-		setValuesIndexMinMax(inputArrayExpected[0], 2, 2);
-		setValuesIndexMinMax(inputArrayExpected[1], 4, 4);
-		setValuesIndexMinMax(inputArrayExpected[2], 6, 6);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		// solved values
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {2, 2},{4, 4},{6, 6} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int i = 0 ; i < dimensionInput; i++) {
@@ -355,7 +363,8 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineAllCanBeSolvedAllNonesAccounted() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 1, 1);
+		List<Integer> inputArrayValueList = Arrays.asList(1, 1, 1);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		for (int i = 0 ; i < dimensionInput; i++) {
@@ -365,10 +374,9 @@ public class PuzzleLineSolverServiceTest {
 		statusArrayInput[4].setFieldValue(null);
 		statusArrayInput[6].setFieldValue(null);
 		// create expected values inputArrayExpected
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 1, 1);
-		setValuesIndexMinMax(inputArrayExpected[0], 2, 2);
-		setValuesIndexMinMax(inputArrayExpected[1], 4, 4);
-		setValuesIndexMinMax(inputArrayExpected[2], 6, 6);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		// solved values
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {2, 2},{4, 4},{6, 6} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int i = 0 ; i < dimensionInput; i++) {
@@ -388,19 +396,17 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineMiddleNoneValue() throws Exception {
 		int dimensionInput = 15;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(3, 2, 1, 1); //the 1's are unimportant
+		List<Integer> inputArrayValueList = Arrays.asList(3, 2, 1, 1);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList); //the 1's are unimportant
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[2].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[6].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(3, 2, 1, 1);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// solved values
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 3);
-		setValuesIndexMinMax(inputArrayExpected[1], 5, 7);
-		setValuesIndexMinMax(inputArrayExpected[2], 8, 12);
-		setValuesIndexMinMax(inputArrayExpected[3], 10, 14);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0, 3},{5, 7},{8, 12},{10, 14} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		statusArrayExpected[1].setFieldValue(PuzzleFieldStatusValue.BLACK);
@@ -418,18 +424,16 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineSpecial1() throws Exception {
 		int dimensionInput = 20;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 3, 3, 4);
+		List<Integer> inputArrayValueList = Arrays.asList(1, 3, 3, 4);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[5].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 3, 3, 4);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// solved values
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 2);
-		setValuesIndexMinMax(inputArrayExpected[1], 3, 6);
-		setValuesIndexMinMax(inputArrayExpected[2], 7, 14);
-		setValuesIndexMinMax(inputArrayExpected[3], 11, 19);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0, 2},{3, 6},{7, 14},{11, 19} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		statusArrayExpected[4].setFieldValue(PuzzleFieldStatusValue.BLACK);
@@ -445,18 +449,16 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineSpecial2() throws Exception {
 		int dimensionInput = 20;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(4, 3, 3, 1);
+		List<Integer> inputArrayValueList = Arrays.asList(4, 3, 3, 1);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[15].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[14].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(4, 3, 3, 1);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// solved values
-		setValuesIndexMinMax(inputArrayExpected[0], 0, 8);
-		setValuesIndexMinMax(inputArrayExpected[1], 5, 12);
-		setValuesIndexMinMax(inputArrayExpected[2], 13, 16);
-		setValuesIndexMinMax(inputArrayExpected[3], 17, 19);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {0, 8},{5, 12},{13, 16},{17, 19} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		statusArrayExpected[15].setFieldValue(PuzzleFieldStatusValue.BLACK);
@@ -473,17 +475,17 @@ public class PuzzleLineSolverServiceTest {
 	@Test
 	public void testSolvePuzzleLineSpecialAllValuesSolved() throws Exception {
 		int dimensionInput = 10;
-		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(1, 2);
+		List<Integer> inputArrayValueList = Arrays.asList(1, 2);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		// solved values
 		statusArrayInput[3].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[7].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		statusArrayInput[8].setFieldValue(PuzzleFieldStatusValue.BLACK);
 		// create expected values
-		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(1, 2);
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
 		// solved values
-		setValuesIndexMinMax(inputArrayExpected[0], 3, 3);
-		setValuesIndexMinMax(inputArrayExpected[1], 7, 8);
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {3, 3},{7, 8} });
 		// create expected values statusArrayExpected
 		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
 		for (int j = 0 ; j <= 9; j++) {
@@ -496,9 +498,50 @@ public class PuzzleLineSolverServiceTest {
 		executeCallAndAnalyse(inputArrayInput, statusArrayInput, inputArrayExpected, statusArrayExpected);
 	}
 
+
+
+	/**
+	 * Problem was throwing exception throw new PuzzleSolverException("Too many solved values for inputValue");
+	 * @throws Exception
+	 */
+	@Test
+	public void testSolvePuzzleLineSomeResolvable() throws Exception {
+		int dimensionInput = 15;
+		List<Integer> inputArrayValueList = Arrays.asList(2,1,2,1);
+		InputValueSolverInfo[] inputArrayInput = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		PuzzleFieldStatus[] statusArrayInput = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		// solved values
+		statusArrayInput[0].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayInput[9].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[11].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayInput[12].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		// create expected values
+		InputValueSolverInfo[] inputArrayExpected  = PuzzleTestUtil.createInputArrayInput(dimensionInput, inputArrayValueList);
+		// solved values
+		setValuesIndexMinMaxArray(inputArrayExpected, new int[][]{ {1, 7},{9, 9},{11, 12},{14, 14} });
+		// create expected values statusArrayExpected
+		PuzzleFieldStatus[] statusArrayExpected  = PuzzleTestUtil.createEmptyColumnPuzzleFieldStatusArray(dimensionInput);
+		statusArrayExpected[0].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[8].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[9].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[10].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[11].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[12].setFieldValue(PuzzleFieldStatusValue.BLACK);
+		statusArrayExpected[13].setFieldValue(PuzzleFieldStatusValue.NONE);
+		statusArrayExpected[14].setFieldValue(PuzzleFieldStatusValue.BLACK);
+
+		executeCallAndAnalyse(inputArrayInput, statusArrayInput, inputArrayExpected, statusArrayExpected);
+	}
+
 	//--------------------------------------------------------
 	// private method
 	//--------------------------------------------------------
+
+	private void setValuesIndexMinMaxArray(InputValueSolverInfo[] inputValueSolverInfoArray, int[][] indexes) throws PuzzleSolverException {
+		for (int i = 0; i < inputValueSolverInfoArray.length; i++) {
+			setValuesIndexMinMax(inputValueSolverInfoArray[i], indexes[i][0], indexes[i][1]);
+		}
+	}
 
 	private void setValuesIndexMinMax(InputValueSolverInfo inputValueSolverInfo, Integer indexMin, Integer indexMax) throws PuzzleSolverException {
 		inputValueSolverInfo.setIndexMin(indexMin);
@@ -510,6 +553,7 @@ public class PuzzleLineSolverServiceTest {
 									   InputValueSolverInfo[] inputArrayExpected,
 									   PuzzleFieldStatus[] statusArrayExpected) throws PuzzleSolverException {
 		printStatusRowWithLabel("Input", inputArrayInput, statusArrayInput);
+		printMinMaxUnderRow(inputArrayInput, statusArrayInput);
 
 		PuzzleLineInfo puzzleLineInfo = new PuzzleLineInfo();
 		puzzleLineInfo.setInputArray(inputArrayInput);

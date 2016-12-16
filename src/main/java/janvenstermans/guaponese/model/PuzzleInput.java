@@ -70,9 +70,7 @@ public class PuzzleInput
 				if (inputXSub != null) {
 					inputValueSolverInfoArrayX[i] = new InputValueSolverInfo[inputXSub.length];
 					for (int j = 0; j < inputXSub.length; j++) {
-						InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputXSub[j], PuzzleFieldStatusValue.BLACK);
-						inputValueSolverInfo.setIndexMin(0);
-						inputValueSolverInfo.setIndexMax(dimensionY);
+						InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputXSub[j], PuzzleFieldStatusValue.BLACK, 0, dimensionY);
 						inputValueSolverInfoArrayX[i][j] = inputValueSolverInfo;
 					}
 				}
@@ -90,9 +88,7 @@ public class PuzzleInput
 				if (inputYSub != null) {
 					inputValueSolverInfoArrayY[i] = new InputValueSolverInfo[inputYSub.length];
 					for (int j = 0; j < inputYSub.length; j++) {
-						InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputYSub[j], PuzzleFieldStatusValue.BLACK);
-						inputValueSolverInfo.setIndexMin(0);
-						inputValueSolverInfo.setIndexMax(dimensionX);
+						InputValueSolverInfo inputValueSolverInfo = new InputValueSolverInfo(inputYSub[j], PuzzleFieldStatusValue.BLACK, 0, dimensionX);
 						inputValueSolverInfoArrayY[i][j] = inputValueSolverInfo;
 					}
 				}
