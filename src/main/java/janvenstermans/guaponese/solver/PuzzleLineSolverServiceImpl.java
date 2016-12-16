@@ -39,6 +39,9 @@ public class PuzzleLineSolverServiceImpl implements PuzzleLineSolverService {
 		checkInputValuesMinValues(puzzleLineInfo);
 		checkInputValuesMaxValues(puzzleLineInfo);
 
+		checkMinMaxForValueFromMin(getFirstUnsolved(puzzleLineInfo.getInputArray()), puzzleLineInfo.getStatusArray());
+		checkMinMaxForValueFromMax(getLastUnsolved(puzzleLineInfo.getInputArray()), puzzleLineInfo.getStatusArray());
+
 		// by now, each InputValueSolverInfo should have min and max value
 		goThroughInputValuesFromLowestToHighestCheckBlackValues(puzzleLineInfo);
 		goThroughInputValuesFromHighestToLowestCheckBlackValues(puzzleLineInfo);
@@ -385,6 +388,84 @@ public class PuzzleLineSolverServiceImpl implements PuzzleLineSolverService {
 				countDown = countDownStart - inputLength - 1;
 			}
 		}
+	}
+
+	private InputValueSolverInfo getFirstUnsolved(InputValueSolverInfo[] inputValueSolverInfoArray) {
+		for(int i = 0; i < inputValueSolverInfoArray.length; i++) {
+			if (!inputValueSolverInfoArray[i].isSolved()) {
+				return inputValueSolverInfoArray[i];
+			}
+		}
+		return null;
+	}
+
+	private InputValueSolverInfo getLastUnsolved(InputValueSolverInfo[] inputValueSolverInfoArray) {
+		for(int i = inputValueSolverInfoArray.length - 1; i >= 0; i--) {
+			if (!inputValueSolverInfoArray[i].isSolved()) {
+				return inputValueSolverInfoArray[i];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Check if value of {@link InputValueSolverInfo} is not surpassed in the range, from lower section.
+	 * @param inputValueSolverInfo
+	 * @return changed
+	 * @throws PuzzleSolverException
+	 */
+	private boolean checkMinMaxForValueFromMin(InputValueSolverInfo inputValueSolverInfo, PuzzleFieldStatus[] statusArray) throws PuzzleSolverException {
+		if (inputValueSolverInfo == null) {
+			return false;
+		}
+		Integer startIndexOfBlackRange = inputValueSolverInfo.getIndexMin();
+		int blackRangeCount = 0;
+		// go through range
+		for (int i = inputValueSolverInfo.getIndexMin(); i <= inputValueSolverInfo.getIndexMax(); i++) {
+			if (inputValueSolverInfo.getStatusValue().equals(statusArray[i].getFieldValue())) {
+				if (blackRangeCount == 0) {
+					startIndexOfBlackRange = i;
+				}
+				blackRangeCount++;
+				if (blackRangeCount > inputValueSolverInfo.getInputValue()) {
+					inputValueSolverInfo.setIndexMax(startIndexOfBlackRange - 2);
+					return true;
+				}
+			} else {
+				blackRangeCount = 0;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check if value of {@link InputValueSolverInfo} is not surpassed in the range, from higher section.
+	 * @param inputValueSolverInfo
+	 * @return changed
+	 * @throws PuzzleSolverException
+	 */
+	private boolean checkMinMaxForValueFromMax(InputValueSolverInfo inputValueSolverInfo, PuzzleFieldStatus[] statusArray) throws PuzzleSolverException {
+		if (inputValueSolverInfo == null) {
+			return false;
+		}
+		Integer startIndexOfBlackRange = inputValueSolverInfo.getIndexMax();
+		int blackRangeCount = 0;
+		// go through range
+		for (int i = inputValueSolverInfo.getIndexMax(); i >= inputValueSolverInfo.getIndexMin(); i--) {
+			if (inputValueSolverInfo.getStatusValue().equals(statusArray[i].getFieldValue())) {
+				if (blackRangeCount == 0) {
+					startIndexOfBlackRange = i;
+				}
+				blackRangeCount++;
+				if (blackRangeCount > inputValueSolverInfo.getInputValue()) {
+					inputValueSolverInfo.setIndexMin(startIndexOfBlackRange + 2);
+					return true;
+				}
+			} else {
+				blackRangeCount = 0;
+			}
+		}
+		return false;
 	}
 
 	private void goThroughInputValuesFromLowestToHighestCheckBlackValues(PuzzleLineInfo puzzleLineInfo) throws PuzzleSolverException {
